@@ -3,12 +3,13 @@
 [vue-table-dynamic](https://github.com/TheoXiong/vue-table-dynamic) 是一个动态表格组件
 
 ## 特性
-- 面向运行时，实现响应源数据变化，动态更新表格内容与形态
+- 面向运行时，实时响应源数据变化，动态更新表格内容与形态
 - 支持过滤、排序、分页、上传、下载、插槽、主题等特性，所有特性均可按需配置启用或禁用
 
 > 部分特性正开发中，敬请期待。
 
 ## Demo
+链接： [https://theoxiong.github.io/vue-table-dynamic/](https://theoxiong.github.io/vue-table-dynamic/) 
 
 ![Demo](./demo.png)
 
