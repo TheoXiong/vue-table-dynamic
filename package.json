@@ -1,6 +1,6 @@
 {
   "name": "vue-table-dynamic",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A vue component of dynamic table",
   "main": "dist/index.min.js",
   "scripts": {
@@ -32,6 +32,7 @@
     "element-ui": "^2.8.2",
     "express": "^4.17.1",
     "file-loader": "^1.1.11",
+    "file-saver": "^2.0.2",
     "html-webpack-plugin": "^3.2.0",
     "lodash.clonedeep": "^4.5.0",
     "mini-css-extract-plugin": "0.4.0",
@@ -42,6 +43,7 @@
     "sass": "^1.3.2",
     "sass-loader": "^8.0.0",
     "style-loader": "^0.21.0",
+    "table": "^5.4.6",
     "url-loader": "^1.0.1",
     "vue": "^2.6.0",
     "vue-html-loader": "^1.2.4",

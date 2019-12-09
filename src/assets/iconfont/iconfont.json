@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3214693",
+      "name": "descending",
+      "font_class": "descending",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "3214694",
+      "name": "ascending",
+      "font_class": "ascending",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
       "icon_id": "4767025",
       "name": "upload",
       "font_class": "upload",
