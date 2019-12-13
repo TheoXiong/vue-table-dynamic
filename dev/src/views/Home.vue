@@ -11,8 +11,12 @@
       <div class="aside-line"></div>
       <vue-button class="aside-btns" size="mini" @click="toggleHeader">Toggle Header</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleBorder">Toggle Border</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleStripe">Toggle Stripe</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleHighlight">Toggle Highlight</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleSelect">Toggle Select</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleSearch">Toggle Search</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleUpload">Toggle Upload</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleDownload">Toggle Download</vue-button>
       <div class="aside-line"></div>
@@ -29,6 +33,7 @@
           @cell-click="onCellClick"
           @upload="onUpload"
           @download="onDownload"
+          ref="table"
         >
         </vue-table-dynamic>
       </vuescroll>
@@ -61,12 +66,19 @@ const defaultTableParams = {
   ],
   header: 'row',
   border: true,
+  stripe: true,
   showCheck: true,
   enableUpload: true,
   enableDownload: true,
   enableSearch: true,
   columnWidth: [{column: 0, width: 80}],
-  sort: [0, 1]
+  sort: [0, 1],
+  edit: {
+    row: [2, 3],
+    column: [3, 4],
+    cell: [[5, 5]]
+  },
+  highlight: {}
 }
 
 const tableHeaderTypes = ['', 'row', 'column']
@@ -142,11 +154,39 @@ export default {
     toggleBorder () {
       this.params.border = !this.params.border
     },
+    toggleStripe () {
+      this.params.stripe = !this.params.stripe
+    },
+    toggleHighlight () {
+      if (Object.keys(this.params.highlight).length > 0) {
+        this.params.highlight = {}
+      } else {
+        this.params.highlight = { column: [-1] }
+      }
+    },
     toggleSelect () {
       this.params.showCheck = !this.params.showCheck
     },
     toggleSearch () {
       this.params.enableSearch = !this.params.enableSearch
+    },
+    toggleSort () {
+      if (this.params.sort.length > 0) {
+        this.params.sort = []
+      } else {
+        this.params.sort = [0, 1]
+      }
+    },
+    toggleEdit () {
+      if (Object.keys(this.params.edit).length > 0) {
+         this.params.edit = {}
+      } else {
+        this.params.edit = {
+          row: [2, 3],
+          column: [3, 4],
+          cell: [[5, 5]]
+        }
+      }
     },
     toggleUpload () {
       this.params.enableUpload = !this.params.enableUpload
@@ -175,10 +215,10 @@ export default {
       console.log('onSelectionChange: ', checkedDatas, checkedIndexs, checkedNum)
     },
     onRowClick (index, data) {
-      console.log('onRowClick: ', index, data)
+      console.log('[ onRowClick ] : ', index, data)
     },
-    onCellClick (rowIndex, cellIndex, data) {
-      console.log('onCellClick: ', rowIndex, cellIndex, data)
+    onCellClick (rowIndex, columnIndex, data) {
+      console.log('[ onCellClick ]: ', rowIndex, columnIndex, data)
     },
     onUpload (datas) {
       console.log('onUpload: ', datas)
