@@ -4,15 +4,16 @@
 
 ## 特性
 - 面向运行时，实时响应源数据变化，动态更新表格内容与形态
-- 支持行多选
-- 支持搜索过滤
-- 支持指定列排序
-- 支持配置列宽度
-- 支持指定 行/列/单元 可编辑
-- 支持指定 行/列/单元 高亮背景
-- 支持指定列筛选（开发中）
-- 支持分页（开发中）
-- 支持通过作用域插槽自定义表格单元内容（开发中）
+- 行多选
+- 搜索过滤
+- 指定列排序
+- 配置列宽度
+- 固定表头
+- 指定 行/列/单元 可编辑
+- 指定 行/列/单元 高亮背景
+- 指定列筛选（开发中）
+- 分页（开发中）
+- 通过作用域插槽自定义表格单元内容（开发中）
 - 所有特性均可按需配置启用或禁用
 
 
@@ -119,8 +120,8 @@ export default {
 ### 条纹与高亮
 
 配置`stripe`属性，显示行条纹      
-配置`highlight`属性，指定行/列/单元高亮     
-通过`highlightedColor`属性，设置高亮背景色
+配置`highlight`属性，指定行/列/单元高亮        
+通过`highlightedColor`属性，设置高亮背景色      
 
 > `highlight`类型为`{row?: Array<number>; column?: Array<number>; cell?: Array<[number,number]>;}`。如：`{row: [1], column: [1], cell: [[-1, -1]]}`，负数表示倒序索引 
 
@@ -162,10 +163,10 @@ export default {
 
 ### 多选
 
-配置`showCheck`属性，启用多选特性     
-> 通过`select`事件和`selection-change`事件，监听用户勾选操作
-> 通过`getCheckedRowDatas`方法获取当前所有选中的行数据
-> 通过`setAllRowChecked`方法将选中状态切换为全选或清空选择         
+配置`showCheck`属性，启用多选特性         
+> 通过`select`事件和`selection-change`事件，监听用户勾选操作      
+> 通过`getCheckedRowDatas`方法获取当前所有选中的行数据      
+> 通过`setAllRowChecked`方法将选中状态切换为全选或清空选择             
 
 ![CheckedTable](./docs/images/checkedTable.png)   
 
@@ -303,11 +304,11 @@ export default {
 ### 编辑
 
 配置`edit`属性，启用排序特性   
-> `edit`类型为`{row?: Array<number>; column?: Array<number>; cell?: Array<[number,number]>;}`。如：`{row: [1], column: [1], cell: [[-1, -1]]}`，负数表示倒序索引
-> 配置为`{row: 'all'}`时，所有单元均可编辑
-> 通过`cell-change`事件，监听编辑操作
-> 通过`getData`方法，获取最新表格数据
-> 如果配置了 `header: 'row'`，则第一行表头不可编辑
+> `edit`类型为`{row?: Array<number>; column?: Array<number>; cell?: Array<[number,number]>;}`。如：`{row: [1], column: [1], cell: [[-1, -1]]}`，负数表示倒序索引       
+> 配置为`{row: 'all'}`时，所有单元均可编辑        
+> 通过`cell-change`事件，监听编辑操作        
+> 通过`getData`方法，获取最新表格数据       
+> 如果配置了 `header: 'row'`，则第一行表头不可编辑       
 
 ![EditTable](./docs/images/editTable.png)  
 

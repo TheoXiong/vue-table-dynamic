@@ -16,83 +16,108 @@
         </vue-button>
       </div>
       <div 
-        class="table-body"
+        class="table"
         :class="{ 'border':tableBorder }"
         :style="{
           minWidth: minWidth + 'px',
           maxWidth: maxWidth + 'px'
         }"
       >
-        <div v-for="(tableRow, i) in tableData.rows" :key="i"> 
+        <!-- Table Header -->
+        <div 
+          v-if="headerInfirstRow" 
+          class="table-row flex-c is-header"
+          :class="{ 'is-striped': rowStripe, 'border':tableBorder }"
+          :style="{ height: rowHeight + 'px' }"
+          @click="onClickRow(tableData.rows[0], 0)"
+        >
           <div 
-            v-show="tableRow.show || (i === 0 && headerInfirstRow)" 
-            class="table-row flex-c"
-            :class="{ 
-              'is-header': (i === 0 && headerInfirstRow),
-              'is-striped': (rowStripe && i % 2 === 0)
-            }"
-            @click="onClickRow(tableRow, tableRow.index)"
-          >
+            v-if="showCheck" 
+            class="table-check flex-c-c" 
+            :class="{ 'border':tableBorder }"
+            :style="{ backgroundColor: isHighlighted(0, NaN) ? highlightedColor : 'transparent' }"
+          > 
             <div 
-              v-if="showCheck" 
-              class="table-check flex-c-c" 
-              :class="{ 'border':tableBorder }"
-              :style="{ backgroundColor: isHighlighted(tableRow.index, NaN) ? highlightedColor : 'transparent' }"
-            > 
-              <div 
-                v-if="i === 0 && headerInfirstRow" 
-                class="table-check-all flex-c-c"
-                :class="{ 'is-checked': tableRow.checked }"
-                @click.stop="onCheckAll(tableRow)"
-              >
-                <i class="iconfont iconcheck" v-show="tableRow.checked === true"></i> 
-                <i class="iconfont iconminus" v-show="tableRow.checked === 'indeterminate'"></i>
-              </div>
-              <div 
-                v-else 
-                class="table-check-row flex-c-c"
-                :class="{ 'is-checked': tableRow.checked }"
-                @click.stop="onCheckRow(tableRow, tableRow.index)"
-              >
-                <i class="iconfont iconcheck" v-show="tableRow.checked"></i>
-              </div>
-            </div>
-            <div 
-              v-for="(tableCell, j) in tableRow.cells" :key="j" 
-              class="table-cell flex-c-s" 
-              :class="{ 'border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
-              :style="getCellStyle(tableRow.index, j)"
-              @click="onClickCell(tableCell, tableRow.index, j)"
+              class="table-check-all flex-c-c"
+              :class="{ 'is-checked': tableData.rows[0].checked }"
+              @click.stop="onCheckAll(tableData.rows[0])"
             >
-              <span 
-                class="table-cell-content"
-                :class="{'fill-width': i !== 0}"
-                :contenteditable="isEditable(tableRow.index, j)"
-                :id="tableCell.key"
-                @blur="onCellBlur(tableCell, tableRow.index, j)"
-                @keydown.enter.stop.prevent="onCellKeyEnter"
-              >
-                {{ tableCell.data }}
-              </span>
-              <span 
-                v-if="i === 0 && headerInfirstRow && sortConfig.includes(j)" 
-                class="table-sort  flex-dir-column"
-              >
-                <i 
-                  class="sort-btns sort-ascending" 
-                  :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
-                  @click.stop="onSort(j, 'ascending')"
-                >
-                </i>
-                <i 
-                  class="sort-btns sort-descending" 
-                  :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'descending' }"
-                  @click.stop="onSort(j, 'descending')"
-                >
-                </i>
-              </span>
+              <i class="iconfont iconcheck" v-show="tableData.rows[0].checked === true"></i> 
+              <i class="iconfont iconminus" v-show="tableData.rows[0].checked === 'indeterminate'"></i>
             </div>
           </div>
+          <div 
+            v-for="(tableCell, j) in tableData.rows[0].cells" :key="j" 
+            class="table-cell flex-c-s" 
+            :class="{ 'border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
+            :style="getCellStyle(0, j)"
+            @click="onClickCell(tableCell, 0, j)"
+          >
+            <span class="table-cell-content">
+              {{ tableCell.data }}
+            </span>
+            <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: rowHeight + 'px' }">
+              <i 
+                class="sort-btns sort-ascending" 
+                :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
+                @click.stop="onSort(j, 'ascending')"
+              >
+              </i>
+              <i 
+                class="sort-btns sort-descending" 
+                :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'descending' }"
+                @click.stop="onSort(j, 'descending')"
+              >
+              </i>
+            </span>
+          </div>
+        </div>
+        <!-- Table Body -->
+        <div class="table-body" :style="{ height: height }">
+          <vuescroll :ops="scrollBarOpts" ref="vuescroll">
+            <div v-for="(tableRow, i) in tableData.rows" :key="i"> 
+              <div 
+                v-show="tableRow.show && !(i === 0 && headerInfirstRow)" 
+                class="table-row flex-c"
+                :class="{ 'is-striped': (rowStripe && i % 2 === 0), 'border':tableBorder }"
+                :style="{ height: rowHeight + 'px' }"
+                @click="onClickRow(tableRow, tableRow.index)"
+              >
+                <div 
+                  v-if="showCheck" 
+                  class="table-check flex-c-c" 
+                  :class="{ 'border':tableBorder }"
+                  :style="{ backgroundColor: isHighlighted(tableRow.index, NaN) ? highlightedColor : 'transparent' }"
+                > 
+                  <div 
+                    class="table-check-row flex-c-c"
+                    :class="{ 'is-checked': tableRow.checked }"
+                    @click.stop="onCheckRow(tableRow, tableRow.index)"
+                  >
+                    <i class="iconfont iconcheck" v-show="tableRow.checked"></i>
+                  </div>
+                </div>
+                <div 
+                  v-for="(tableCell, j) in tableRow.cells" :key="j" 
+                  class="table-cell flex-c-s" 
+                  :class="{ 'border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
+                  :style="getCellStyle(tableRow.index, j)"
+                  @click="onClickCell(tableCell, tableRow.index, j)"
+                >
+                  <span 
+                    class="table-cell-content"
+                    :class="{'fill-width': i !== 0}"
+                    :contenteditable="isEditable(tableRow.index, j)"
+                    :id="tableCell.key"
+                    @blur="onCellBlur(tableCell, tableRow.index, j)"
+                    @keydown.enter.stop.prevent="onCellKeyEnter"
+                  >
+                    {{ tableCell.data }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </vuescroll>
         </div>
       </div>
     </div>
@@ -102,6 +127,7 @@
 <script>
 import { unemptyArray, is2DMatrix } from '../utils/array.js'
 import { unique } from '../utils/unique.js'
+import vuescroll from 'vuescroll'
 import VueButton from './VueButton.vue'
 import VueInput from './VueInput.vue'
 import '../assets/css/flex.css'
@@ -114,7 +140,16 @@ export default {
     return {
       tableData: {},
       searchValue: '',
-      activatedSort: {}
+      activatedSort: {},
+      scrollBarOpts: {
+        scrollPanel: {
+          scrollingX: false
+        },
+        bar: {
+          background: '#DFDFDF',
+          opacity: 0.8
+        }
+      }
     }
   },
   props: {
@@ -133,6 +168,8 @@ export default {
     // params.enableSearch: (Boolean) 启用搜索功能。默认禁用
     // params.minWidth: (Number) table最小宽度。默认300
     // params.maxWidth: (Number) table最大宽度。默认1000
+    // params.height: (Number) table高度。默认9999
+    // params.rowHeight: (Number) table row高度。默认30
     // params.columnWidth: (Array) 指定某一列或某几列的宽度，剩余列宽度均分. [{column: 0, width: 80}, {column: 1, width: '20%'}]
     // params.sort: (Array) 指定以某列为基准排序。如指定第1列和第二列可排序：[0, 1]。 只在配置了第一行作为表头时有效
     // params.edit: (Object) 配置可编辑的 行/列/表单元。 如：{ row: [2, 3, ... ], column: [3, 4, ... ], cell: [[4, 4], [5, 6], ... ] } ；负数表示倒序（如-1为最后1行/列）；row: 'all' 所有行
@@ -208,6 +245,18 @@ export default {
         return this.params.maxWidth
       }
       return 1000
+    },
+    rowHeight () {
+      if (this.params && typeof this.params.rowHeight === 'number' && this.params.rowHeight >= 24) {
+        return this.params.rowHeight
+      }
+      return 30
+    },
+    height () {
+      if (this.params && typeof this.params.height === 'number' && this.params.height > this.rowHeight) {
+        return (this.params.height - this.rowHeight) + 'px'
+      }
+      return 'auto'
     },
     columnWidth () {
       if (this.params && unemptyArray(this.params.columnWidth)) {
@@ -701,13 +750,12 @@ export default {
       }
     }
   },
-  components: { VueButton, VueInput }
+  components: { VueButton, VueInput, vuescroll }
 }
 </script>
 
 <style lang="scss" scoped>
 $borderColor: #DCDFE6;
-$rowHeight: 30px;
 
 .data-table{
   width: 100%;
@@ -718,25 +766,25 @@ $rowHeight: 30px;
   color: #606266;
   overflow: hidden;
 }
-.table-body{
+.table{
   box-sizing: border-box;
 }
-.table-body.border{
+.table.border{
   border-top: 1px solid $borderColor;
-  border-right: 1px solid $borderColor;
 }
 
 .table-row{
-  height: $rowHeight;
   background-color: transparent;
 }
 .table-row.is-header, 
 .table-cell.is-header {
   font-weight: 600;
 }
-
 .table-row.is-striped{
   background-color: #F9F9F9;
+}
+.table-row.border{
+  border-right: 1px solid $borderColor;
 }
 
 .table-row:hover{
@@ -837,7 +885,6 @@ $rowHeight: 30px;
 
 .table-sort{
   width: 20px;
-  height: $rowHeight;
   margin-left: 2px;
   position: relative;
   vertical-align: middle;

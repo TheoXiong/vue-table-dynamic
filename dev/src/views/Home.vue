@@ -65,6 +65,7 @@ const defaultTableParams = {
     [3, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`]
   ],
   header: 'row',
+  height: 300,
   border: true,
   stripe: true,
   showCheck: true,
