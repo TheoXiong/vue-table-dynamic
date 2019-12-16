@@ -440,6 +440,7 @@ export default {
       let cellEle = document.querySelector(`#${tableCell.key}`)
       if (cellEle && (tableCell.data !== trim(cellEle.innerHTML))) {
         tableCell.data = trim(cellEle.innerHTML)
+        this.$emit('cell-change', rowIndex, columnIndex, tableCell.data)
       }
     },
     onCellKeyEnter (e) {
@@ -508,7 +509,7 @@ export default {
    * @param {String} searchValue 搜索匹配关键字
    */
     filter (searchValue) {
-      if (!(this.enableSearch && this.tableData && this.tableData.rows)) return
+      if (!(this.tableData && this.tableData.rows)) return
 
       searchValue = String(searchValue)
       this.tableData.rows.forEach(row => {
@@ -584,7 +585,7 @@ export default {
       return checkedDatas || []
     },
     /**
-   * @function 根据表格最新数据。 可指定只包含指定行, 不指定则包含全部数据。 行顺序为初始顺序
+   * @function 获取表格最新数据。 可指定只包含指定行, 不指定则包含全部数据。 行顺序为初始顺序
    * @param {Array} rowIndexs 指定行。如：[ 0, 1, 2, ... ]
    */
     getData (rowIndexs) {
@@ -803,6 +804,7 @@ $rowHeight: 30px;
   min-width: 12px;
   min-height: 10px;
   outline: 0;
+  text-align:left;
 }
 .table-cell-content.fill-width{
   width: 100%;
