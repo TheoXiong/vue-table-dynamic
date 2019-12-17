@@ -9,16 +9,16 @@
       <vue-button class="aside-btns" size="mini" @click="addColumn">Add Column</vue-button>
       <vue-button class="aside-btns" size="mini" @click="deleteColumn">Delete Column</vue-button>
       <div class="aside-line"></div>
+      <vue-button class="aside-btns" size="mini" @click="fixedHeader">Fixed Header</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleHeader">Toggle Header</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleBorder">Toggle Border</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleStripe">Toggle Stripe</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleHighlight">Toggle Highlight</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleSelect">Toggle Select</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleSearch">Toggle Search</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleFilter">Toggle Filter</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleUpload">Toggle Upload</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleDownload">Toggle Download</vue-button>
       <div class="aside-line"></div>
       <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
     </aside>
@@ -31,7 +31,6 @@
           @selection-change="onSelectionChange"
           @row-click="onRowClick"
           @cell-click="onCellClick"
-          @upload="onUpload"
           @download="onDownload"
           ref="table"
         >
@@ -62,24 +61,32 @@ const defaultTableParams = {
     ['Index', `Data1`, `Data2`, `Data3`],
     [1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
     [2, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [3, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`]
+    [3, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
+    [4, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
+    [5, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
+    [6, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
+    [7, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
+    [8, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`]
   ],
   header: 'row',
-  height: 300,
+  height: '',
   border: true,
   stripe: true,
   showCheck: true,
-  enableUpload: true,
-  enableDownload: true,
   enableSearch: true,
-  columnWidth: [{column: 0, width: 80}],
+  columnWidth: [{column: 0, width: 100}],
   sort: [0, 1],
-  edit: {
-    row: [2, 3],
-    column: [3, 4],
-    cell: [[5, 5]]
-  },
-  highlight: {}
+  edit: {},
+  highlight: {},
+  filter: [{
+    column: 0, 
+    content: [{text: '> 3', value: 3}, {text: '> 5', value: 5}, {text: '> 7', value: 7}], 
+    method: (value, tableCell) => { return tableCell.data > value }
+  }, {
+    column: 2, 
+    content: [{text: '1-Cell', value: '1-Cell'}, {text: '2-Cell', value: '2-Cell'}, {text: '3-Cell', value: '3-Cell'}], 
+    method: (value, tableCell) => { return String(tableCell.data).toLocaleLowerCase().includes(String(value).toLocaleLowerCase()) }
+  }]
 }
 
 const tableHeaderTypes = ['', 'row', 'column']
@@ -152,6 +159,13 @@ export default {
 
       this.params.header = tableHeaderTypes[curr + 1]
     },
+    fixedHeader () {
+      if (this.params.height) {
+        this.params.height = ''
+      } else {
+        this.params.height = 170
+      }
+    },
     toggleBorder () {
       this.params.border = !this.params.border
     },
@@ -171,6 +185,21 @@ export default {
     toggleSearch () {
       this.params.enableSearch = !this.params.enableSearch
     },
+    toggleFilter () {
+      if (this.params.filter.length > 0) {
+        this.params.filter = []
+      } else {
+        this.params.filter = [{
+          column: 0, 
+          content: [{text: '> 3', value: 3}, {text: '> 5', value: 5}, {text: '> 7', value: 7}], 
+          method: (value, tableCell) => { return tableCell.data > value }
+        }, {
+          column: 2, 
+          content: [{text: '1-Cell', value: '1-Cell'}, {text: '2-Cell', value: '2-Cell'}, {text: '3-Cell', value: '3-Cell'}], 
+          method: (value, tableCell) => { return String(tableCell.data).toLocaleLowerCase().includes(String(value).toLocaleLowerCase()) }
+        }]
+      }
+    },
     toggleSort () {
       if (this.params.sort.length > 0) {
         this.params.sort = []
@@ -183,17 +212,11 @@ export default {
          this.params.edit = {}
       } else {
         this.params.edit = {
-          row: [2, 3],
-          column: [3, 4],
-          cell: [[5, 5]]
+          row: [0, 1],
+          column: [1, 2],
+          cell: [[3, 3]]
         }
       }
-    },
-    toggleUpload () {
-      this.params.enableUpload = !this.params.enableUpload
-    },
-    toggleDownload () {
-      this.params.enableDownload = !this.params.enableDownload
     },
     changeColumnWidth () {
       if (this.params.columnWidth[0].width >= 200) {
@@ -220,12 +243,6 @@ export default {
     },
     onCellClick (rowIndex, columnIndex, data) {
       console.log('[ onCellClick ]: ', rowIndex, columnIndex, data)
-    },
-    onUpload (datas) {
-      console.log('onUpload: ', datas)
-      if (!(datas && datas.length > 0)) {
-        return this.showMsg('warning', 'The data is empty.')
-      }
     },
     onDownload (datas) {
       if (!(datas && datas.length > 0)) {

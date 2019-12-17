@@ -20,6 +20,13 @@
       "unicode_decimal": 58957
     },
     {
+      "icon_id": "4767014",
+      "name": "down",
+      "font_class": "down",
+      "unicode": "e7eb",
+      "unicode_decimal": 59371
+    },
+    {
       "icon_id": "4767025",
       "name": "upload",
       "font_class": "upload",

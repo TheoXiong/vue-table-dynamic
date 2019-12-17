@@ -70,16 +70,32 @@
               >
               </i>
             </span>
+            <span 
+              v-if="filterConfig[j]" 
+              class="table-filter flex-c-c" 
+              :style="{ height: rowHeight + 'px' }" 
+            >
+              <filter-panel 
+                :content="filterConfig[j].content" 
+                @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
+                @reset="clearFilter(j)"
+              >
+                <i slot="reference" class="iconfont icondown"></i>
+              </filter-panel>
+            </span>
           </div>
         </div>
         <!-- Table Body -->
         <div class="table-body" :style="{ height: height }">
           <vuescroll :ops="scrollBarOpts" ref="vuescroll">
             <div v-for="(tableRow, i) in tableData.rows" :key="i"> 
-              <div 
-                v-show="tableRow.show && !(i === 0 && headerInfirstRow)" 
+              <div
+                v-show="tableRow.show && !tableRow.filtered && !(i === 0 && headerInfirstRow)" 
                 class="table-row flex-c"
-                :class="{ 'is-striped': (rowStripe && i % 2 === 0), 'border':tableBorder }"
+                :class="{ 
+                  'is-striped': (rowStripe && i % 2 === 0), 
+                  'border':tableBorder
+                }"
                 :style="{ height: rowHeight + 'px' }"
                 @click="onClickRow(tableRow, tableRow.index)"
               >
@@ -130,6 +146,7 @@ import { unique } from '../utils/unique.js'
 import vuescroll from 'vuescroll'
 import VueButton from './VueButton.vue'
 import VueInput from './VueInput.vue'
+import FilterPanel from './FilterPanel.vue'
 import '../assets/css/flex.css'
 import '../assets/iconfont/iconfont.css'
 const trim = require('lodash.trim')
@@ -174,6 +191,7 @@ export default {
     // params.sort: (Array) 指定以某列为基准排序。如指定第1列和第二列可排序：[0, 1]。 只在配置了第一行作为表头时有效
     // params.edit: (Object) 配置可编辑的 行/列/表单元。 如：{ row: [2, 3, ... ], column: [3, 4, ... ], cell: [[4, 4], [5, 6], ... ] } ；负数表示倒序（如-1为最后1行/列）；row: 'all' 所有行
     //                      编辑会改变表格显示的数据，不会改变传入的源数据。调用组件方法获取表格数据时，返回编辑后的数据。表头不可编辑。默认禁用
+    // params.filter: (Array) 配置基于列的筛选。如： [{column: 0, content: [{text: '> 5', value: 5}], method: (value, tableCell) => { ... }}]
     params: { type: Object, default: () => { return {} } }
   },
   computed: {
@@ -285,6 +303,21 @@ export default {
         return this.params.edit
       }
       return {}
+    },
+    filterConfig () {
+      if (this.params && unemptyArray(this.params.filter)) {
+        let filterObj = {}
+        this.params.filter.forEach(f => {
+          if (f && typeof f.column === 'number' && f.column >= 0 && typeof f.method === 'function' && unemptyArray(f.content)) {
+            if (f.content.every(c => { return (c && typeof c.text === 'string' && typeof c.value !== 'undefined') })) {
+              let content = f.content.map(c => { return { ...c, checked: false, key: unique(`content-`) } })
+              filterObj[f.column] = { ...f, content, key: unique(`filter-`) }
+            }
+          }
+        })
+        return filterObj
+      }
+      return {}
     }
   },
   watch: {
@@ -305,7 +338,7 @@ export default {
     },
     searchValue (value) {
       if (!this.enableSearch) return
-      this.filter(value)
+      this.search(value)
     },
     headerInfirstRow (value) {
       if (value && this.tableData && this.tableData.rows.length) {
@@ -315,7 +348,7 @@ export default {
     },
     enableSearch (newVal, oldVal) {
       if (oldVal && !newVal) {
-        this.showAll()
+        this.clearSearch()
       }
     }
   },
@@ -329,9 +362,9 @@ export default {
    */
     initData () {
       if (this.params && is2DMatrix(this.sourceData)) {
-        let table = { key: unique(`table-`), checked: false, rows: [] }
+        let table = { key: unique(`table-`), checked: false, rows: [], filteredRows: {} }
         for (let i = 0; i < this.sourceData.length; i++) {
-          let tableRow = { key: unique(`table-`), checked: false, show: true, index: i }
+          let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, index: i }
           tableRow.cells = this.sourceData[i].map(item => {
             return { data: item, key: unique(`table-`), checked: false }
           })
@@ -554,10 +587,64 @@ export default {
       this.$emit('sort-change', index, value)
     },
     /**
-   * @function 过滤行
-   * @param {String} searchValue 搜索匹配关键字
+   * @function 基于某一列数据筛选
+   * @param {Number} columnIndex 列索引
+   * @param {Array} checked 选中的筛选条件
+   * @param {Object} config 该列的筛选配置
    */
-    filter (searchValue) {
+    onFilter (columnIndex, checked, config) {
+      if (!(this.tableData && this.tableData.rows)) return
+
+      let filteredArr = []
+      this.tableData.rows.forEach((row) => {
+        if (row && row.cells && row.cells[columnIndex]) {
+          let matched = checked.some(item => {
+            return config.method(item.value, row.cells[columnIndex])
+          })
+          matched ? '' : filteredArr.push(row.index)
+        }
+      })
+      this.tableData.filteredRows[columnIndex] = filteredArr
+
+      this.updateFilteredRows()
+
+      console.log('getActivatedRowNum', this.getActivatedRowNum())
+    },
+    /**
+   * @function 更新行筛选状态
+   */
+    updateFilteredRows () {
+      this.tableData.rows.forEach(row => {
+        row.filtered = Object.keys(this.tableData.filteredRows).some(key => {
+          return this.tableData.filteredRows[key].includes(row.index)
+        })
+        row.filtered = !!row.filtered
+      })
+    },
+    /**
+   * @function 清除筛选状态
+   * @param {Number} columnIndex 列索引。传入列索引时，对该列清除；不传索引时，清除所有筛选
+   */
+    clearFilter (columnIndex) {
+      if (typeof columnIndex === 'number') {
+        delete this.tableData.filteredRows[columnIndex]
+        if (this.filterConfig && this.filterConfig[columnIndex]) {
+          this.filterConfig[columnIndex].content.forEach(c => { c.checked = false })
+        }
+      } else {
+        this.tableData.filteredRows = {}
+        Object.keys(this.filterConfig).forEach(key => {
+          this.filterConfig[key].content.forEach(c => { c.checked = false })
+        })
+      }
+  
+      this.updateFilteredRows()
+    },
+    /**
+   * @function 按关键字搜索，显示匹配的行
+   * @param {String} searchValue 关键字
+   */
+    search (searchValue) {
       if (!(this.tableData && this.tableData.rows)) return
 
       searchValue = String(searchValue)
@@ -574,9 +661,9 @@ export default {
       })
     },
     /**
-   * @function 取消过滤，显示所有行
+   * @function 取消搜索过滤
    */
-    showAll () {
+    clearSearch () {
       if (!(this.tableData && this.tableData.rows)) return
       this.tableData.rows.forEach(row => {
         row ? row.show = true : ''
@@ -748,9 +835,26 @@ export default {
           row.checked = !!checked
         })
       }
+    },
+    /**
+   * @function 当前显示的行数
+   */
+    getActivatedRowNum () {
+      if (this.tableData && unemptyArray(this.tableData.rows)) {
+        let num = 0
+        this.tableData.rows.forEach((row, index) => {
+          if (index === 0 && this.headerInfirstRow) {
+            return (num++)
+          }
+          if (row.show && !row.filtered) num++
+        })
+        return num
+      }
+
+      return 0
     }
   },
-  components: { VueButton, VueInput, vuescroll }
+  components: { VueButton, VueInput, FilterPanel, vuescroll }
 }
 </script>
 
@@ -768,13 +872,23 @@ $borderColor: #DCDFE6;
 }
 .table{
   box-sizing: border-box;
+  // border-bottom: 1px solid $borderColor;
 }
+
 .table.border{
   border-top: 1px solid $borderColor;
 }
 
 .table-row{
+  box-sizing: border-box;
+  border-bottom: 1px solid $borderColor;
   background-color: transparent;
+}
+.table-row.is-header{
+  overflow: visible;
+  .table-cell{
+    overflow: visible;
+  }
 }
 .table-row.is-header, 
 .table-cell.is-header {
@@ -795,7 +909,6 @@ $borderColor: #DCDFE6;
   box-sizing: border-box;
   height: 100%;
   padding: 0 8px;
-  border-bottom: 1px solid $borderColor;
   overflow: hidden;
   -webkit-flex: 0 0 50px;
   -ms-flex: 0 0 50px;
@@ -835,7 +948,6 @@ $borderColor: #DCDFE6;
   box-sizing: border-box;
   height: 100%;
   padding: 0 8px;
-  border-bottom: 1px solid $borderColor;
   overflow: hidden;
   -webkit-flex: 1;
   -ms-flex: 1;
@@ -858,7 +970,6 @@ $borderColor: #DCDFE6;
   width: 100%;
 }
 
-.table-row,
 .table-cell-content{
   position: relative;
   overflow: hidden;
@@ -909,6 +1020,18 @@ $borderColor: #DCDFE6;
   }
   .sort-descending.activated{
     border-top-color: #409EFF;
+  }
+}
+
+.table-filter{
+  position: relative;
+  margin-left: 2px;
+  line-height: 100%;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #909399;
+  i.iconfont{
+    font-size: 12px;
   }
 }
 

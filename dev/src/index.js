@@ -3,9 +3,9 @@ import App from './App.vue'
 import './assets/css/flex.css'
 
 // dev
-import VueTableDynamic from '../../src/index.js'
+// import VueTableDynamic from '../../src/index.js'
 // prod
-// import VueTableDynamic from '../../'
+import VueTableDynamic from '../../'
 
 Vue.use(VueTableDynamic)
 
