@@ -20,6 +20,27 @@
       "unicode_decimal": 58957
     },
     {
+      "icon_id": "4767011",
+      "name": "right",
+      "font_class": "right",
+      "unicode": "e7ec",
+      "unicode_decimal": 59372
+    },
+    {
+      "icon_id": "4767012",
+      "name": "left",
+      "font_class": "left",
+      "unicode": "e7ed",
+      "unicode_decimal": 59373
+    },
+    {
+      "icon_id": "4767013",
+      "name": "up",
+      "font_class": "up",
+      "unicode": "e7ee",
+      "unicode_decimal": 59374
+    },
+    {
       "icon_id": "4767014",
       "name": "down",
       "font_class": "down",

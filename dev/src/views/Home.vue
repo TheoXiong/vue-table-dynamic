@@ -19,6 +19,7 @@
       <vue-button class="aside-btns" size="mini" @click="toggleFilter">Toggle Filter</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
       <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
       <div class="aside-line"></div>
       <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
     </aside>
@@ -58,15 +59,7 @@ const random = (length) => {
 
 const defaultTableParams = {
   data: [
-    ['Index', `Data1`, `Data2`, `Data3`],
-    [1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [2, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [3, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [4, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [5, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [6, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [7, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`],
-    [8, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`]
+    ['Index', `Data1`, `Data2`, `Data3`]
   ],
   header: 'row',
   height: '',
@@ -86,7 +79,14 @@ const defaultTableParams = {
     column: 2, 
     content: [{text: '1-Cell', value: '1-Cell'}, {text: '2-Cell', value: '2-Cell'}, {text: '3-Cell', value: '3-Cell'}], 
     method: (value, tableCell) => { return String(tableCell.data).toLocaleLowerCase().includes(String(value).toLocaleLowerCase()) }
-  }]
+  }],
+  pagination: true,
+  pageSize: 15,
+  pageSizes: [5, 15, 30, 50, 100]
+}
+
+for (let i = 0; i < 150; i++) {
+  defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
 }
 
 const tableHeaderTypes = ['', 'row', 'column']
@@ -108,7 +108,7 @@ export default {
       let rowNum = this.params.data.length
       let columnNum = this.params.data[0].length
        
-      if (rowNum >= 30) {
+      if (rowNum >= 200) {
         return this.showMsg('warning', 'The number of rows cannot be more than 30.')
       }
 
@@ -217,6 +217,11 @@ export default {
           cell: [[3, 3]]
         }
       }
+    },
+    togglePagination () {
+      // this.params.pagination = !this.params.pagination
+
+      this.params.pageSize -= 5
     },
     changeColumnWidth () {
       if (this.params.columnWidth[0].width >= 200) {

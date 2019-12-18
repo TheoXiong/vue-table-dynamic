@@ -3,7 +3,9 @@
     <div 
       v-if="tableData && tableData.rows && tableData.rows.length > 0" 
       class="table-container"
+      :style="{ minWidth: minWidth + 'px', maxWidth: maxWidth + 'px' }"
     >
+      <!-- Table Tools -->
       <div class="table-tools flex-c-s" v-if="enableTools">
         <vue-input v-if="enableSearch" class="tools-search" v-model="searchValue" placeholder="Search">
           <i class="iconfont iconsearch" slot="prefix"></i>
@@ -18,10 +20,7 @@
       <div 
         class="table"
         :class="{ 'border':tableBorder }"
-        :style="{
-          minWidth: minWidth + 'px',
-          maxWidth: maxWidth + 'px'
-        }"
+        :style="{ minWidth: minWidth + 'px', maxWidth: maxWidth + 'px' }"
       >
         <!-- Table Header -->
         <div 
@@ -90,7 +89,7 @@
           <vuescroll :ops="scrollBarOpts" ref="vuescroll">
             <div v-for="(tableRow, i) in tableData.rows" :key="i"> 
               <div
-                v-show="tableRow.show && !tableRow.filtered && !(i === 0 && headerInfirstRow)" 
+                v-show="tableRow.show && !tableRow.filtered && !(pagination && !tableRow.inPage) && !(i === 0 && headerInfirstRow)" 
                 class="table-row flex-c"
                 :class="{ 
                   'is-striped': (rowStripe && i % 2 === 0), 
@@ -136,6 +135,19 @@
           </vuescroll>
         </div>
       </div>
+      <!-- Table Pagination -->
+      <div class="table-pagination" v-if="pagination">
+        <vue-pagination
+          :page-size="pageSize"
+          :page-sizes="pageSizes"
+          :total="totalPages" 
+          :disabled="!pagination"
+          @current-page="onPageChange"
+          @size="onPageSizeChange"
+          ref="tablePagination"
+        >
+        </vue-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -147,6 +159,7 @@ import vuescroll from 'vuescroll'
 import VueButton from './VueButton.vue'
 import VueInput from './VueInput.vue'
 import FilterPanel from './FilterPanel.vue'
+import VuePagination from './VuePagination.vue'
 import '../assets/css/flex.css'
 import '../assets/iconfont/iconfont.css'
 const trim = require('lodash.trim')
@@ -166,7 +179,9 @@ export default {
           background: '#DFDFDF',
           opacity: 0.8
         }
-      }
+      },
+      totalPages: 0,
+      pageSize: 0
     }
   },
   props: {
@@ -192,6 +207,9 @@ export default {
     // params.edit: (Object) 配置可编辑的 行/列/表单元。 如：{ row: [2, 3, ... ], column: [3, 4, ... ], cell: [[4, 4], [5, 6], ... ] } ；负数表示倒序（如-1为最后1行/列）；row: 'all' 所有行
     //                      编辑会改变表格显示的数据，不会改变传入的源数据。调用组件方法获取表格数据时，返回编辑后的数据。表头不可编辑。默认禁用
     // params.filter: (Array) 配置基于列的筛选。如： [{column: 0, content: [{text: '> 5', value: 5}], method: (value, tableCell) => { ... }}]
+    // params.pagination: (Boolean) 是否启用分页功能。默认false
+    // params.pageSize: (Number) 每页显示条数
+    // params.pageSizes: (Array) 每页显示条数的可选值
     params: { type: Object, default: () => { return {} } }
   },
   computed: {
@@ -318,6 +336,21 @@ export default {
         return filterObj
       }
       return {}
+    },
+    pagination () {
+      return !!(this.params && this.params.pagination)
+    },
+    pageSizeConfig () {
+      if (this.params && typeof this.params.pageSize === 'number' && this.params.pageSize > 0) {
+        return this.params.pageSize
+      }
+      return 10
+    },
+    pageSizes () {
+      if (Array.isArray(this.params.pageSizes)) {
+        return this.params.pageSizes
+      }
+      return [10, 20, 50, 100]
     }
   },
   watch: {
@@ -350,6 +383,14 @@ export default {
       if (oldVal && !newVal) {
         this.clearSearch()
       }
+    },
+    pageSizeConfig: {
+      handler (v) {
+        if (v > 0 && this.pageSize !== v) {
+          this.pageSize = v
+        }
+      },
+      immediate: true
     }
   },
   beforeDestroy () {
@@ -357,6 +398,33 @@ export default {
     this.activatedSort = {}
   },
   methods: {
+    updatePagination () {
+      if (!(this.tableData && this.tableData.rows && this.tableData.rows.length > 0)) return
+      const rowNum = this.getActivatedRowNum()
+      if (rowNum === this.totalPages) {
+        if (this.$refs && this.$refs.tablePagination) {
+          this.$refs.tablePagination.initPages(this.totalPages)
+        }
+      } else {
+        this.totalPages = rowNum
+      }
+    },
+    onPageChange (page) {
+      if (!(this.tableData && this.tableData.rows && this.tableData.rows.length > 0)) return
+      let start = (page - 1) * this.pageSize
+      let end = start + this.pageSize
+
+      let rows = this.tableData.rows.filter((row, index) => {
+        if (index === 0 && this.headerInfirstRow) return false
+        return row.show && !row.filtered 
+      })
+      rows.forEach((row, index) => {
+        row.inPage = !!(index >= start && index < end)
+      })
+    },
+    onPageSizeChange (size) {
+      this.pageSize = size
+    },
     /**
    * @function 初始化Table数据
    */
@@ -364,13 +432,14 @@ export default {
       if (this.params && is2DMatrix(this.sourceData)) {
         let table = { key: unique(`table-`), checked: false, rows: [], filteredRows: {} }
         for (let i = 0; i < this.sourceData.length; i++) {
-          let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, index: i }
+          let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, inPage: true, index: i }
           tableRow.cells = this.sourceData[i].map(item => {
             return { data: item, key: unique(`table-`), checked: false }
           })
           table.rows.push(tableRow)
         }
         this.tableData = table
+        this.$nextTick(this.updatePagination)
       }
     },
     /**
@@ -585,6 +654,7 @@ export default {
       })
 
       this.$emit('sort-change', index, value)
+      this.$nextTick(this.updatePagination)
     },
     /**
    * @function 基于某一列数据筛选
@@ -607,8 +677,6 @@ export default {
       this.tableData.filteredRows[columnIndex] = filteredArr
 
       this.updateFilteredRows()
-
-      console.log('getActivatedRowNum', this.getActivatedRowNum())
     },
     /**
    * @function 更新行筛选状态
@@ -620,6 +688,7 @@ export default {
         })
         row.filtered = !!row.filtered
       })
+      this.$nextTick(this.updatePagination)
     },
     /**
    * @function 清除筛选状态
@@ -659,6 +728,7 @@ export default {
           row.show = !!matched
         }
       })
+      this.$nextTick(this.updatePagination)
     },
     /**
    * @function 取消搜索过滤
@@ -839,11 +909,12 @@ export default {
     /**
    * @function 当前显示的行数
    */
-    getActivatedRowNum () {
+    getActivatedRowNum (includeWhenHeaderInfirstRow = false) {
       if (this.tableData && unemptyArray(this.tableData.rows)) {
         let num = 0
         this.tableData.rows.forEach((row, index) => {
           if (index === 0 && this.headerInfirstRow) {
+            if (!includeWhenHeaderInfirstRow) return
             return (num++)
           }
           if (row.show && !row.filtered) num++
@@ -854,7 +925,7 @@ export default {
       return 0
     }
   },
-  components: { VueButton, VueInput, FilterPanel, vuescroll }
+  components: { VueButton, VueInput, FilterPanel, VuePagination, vuescroll }
 }
 </script>
 
@@ -868,7 +939,6 @@ $borderColor: #DCDFE6;
   font-family: Helvetica, Arial, 'Microsoft YaHei';
   font-size: 13px;
   color: #606266;
-  overflow: hidden;
 }
 .table{
   box-sizing: border-box;
@@ -1033,6 +1103,10 @@ $borderColor: #DCDFE6;
   i.iconfont{
     font-size: 12px;
   }
+}
+
+.table-pagination{
+  padding: 8px 0px;
 }
 
 </style>
