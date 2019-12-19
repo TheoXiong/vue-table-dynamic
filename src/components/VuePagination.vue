@@ -88,7 +88,7 @@ export default {
   watch: {
     total: {
       handler (v) {
-        if (v > 0) {
+        if (v > 0 && this.size > 0) {
           this.$nextTick(() => { this.initPages(v) })
         }
       },
@@ -98,7 +98,7 @@ export default {
       handler (v) {
         if (v > 0 && this.size !== v) {
           this.size = v
-          this.$nextTick(() => { this.initPages(this.total) })
+          this.total > 0 ? this.$nextTick(() => { this.initPages(this.total) }) : ''
         }
       },
       immediate: true
@@ -130,7 +130,6 @@ export default {
     initPages (total) {
       if (!(total > 0)) return
       this.pageCount = Math.ceil(total / this.size)
-      console.log('initPages ', total)
       this.toPage(1)
     },
     onPage (page) {

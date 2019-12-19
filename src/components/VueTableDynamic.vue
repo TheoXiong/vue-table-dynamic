@@ -200,7 +200,7 @@ export default {
     // params.enableSearch: (Boolean) 启用搜索功能。默认禁用
     // params.minWidth: (Number) table最小宽度。默认300
     // params.maxWidth: (Number) table最大宽度。默认1000
-    // params.height: (Number) table高度。默认9999
+    // params.height: (Number) table高度。
     // params.rowHeight: (Number) table row高度。默认30
     // params.columnWidth: (Array) 指定某一列或某几列的宽度，剩余列宽度均分. [{column: 0, width: 80}, {column: 1, width: '20%'}]
     // params.sort: (Array) 指定以某列为基准排序。如指定第1列和第二列可排序：[0, 1]。 只在配置了第一行作为表头时有效
@@ -386,7 +386,7 @@ export default {
     },
     pageSizeConfig: {
       handler (v) {
-        if (v > 0 && this.pageSize !== v) {
+        if (v > 0 && this.pageSize !== v && (this.params && this.params.pagination)) {
           this.pageSize = v
         }
       },
@@ -398,7 +398,28 @@ export default {
     this.activatedSort = {}
   },
   methods: {
+    /**
+   * @function 初始化Table数据
+   */
+    initData () {
+      if (this.params && is2DMatrix(this.sourceData)) {
+        let table = { key: unique(`table-`), checked: false, rows: [], filteredRows: {} }
+        for (let i = 0; i < this.sourceData.length; i++) {
+          let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, inPage: false, index: i }
+          tableRow.cells = this.sourceData[i].map(item => {
+            return { data: item, key: unique(`table-`), checked: false }
+          })
+          table.rows.push(tableRow)
+        }
+        this.tableData = table
+        this.$nextTick(this.updatePagination)
+      }
+    },
+    /**
+   * @function 更新分页数据
+   */
     updatePagination () {
+      if (!this.pagination) return
       if (!(this.tableData && this.tableData.rows && this.tableData.rows.length > 0)) return
       const rowNum = this.getActivatedRowNum()
       if (rowNum === this.totalPages) {
@@ -409,7 +430,12 @@ export default {
         this.totalPages = rowNum
       }
     },
+    /**
+   * @function 当前页编号改变
+   * @param {Number} page 页编号
+   */
     onPageChange (page) {
+      if (!this.pagination) return
       if (!(this.tableData && this.tableData.rows && this.tableData.rows.length > 0)) return
       let start = (page - 1) * this.pageSize
       let end = start + this.pageSize
@@ -422,25 +448,12 @@ export default {
         row.inPage = !!(index >= start && index < end)
       })
     },
-    onPageSizeChange (size) {
-      this.pageSize = size
-    },
     /**
-   * @function 初始化Table数据
+   * @function 每页显示条数切换事件
    */
-    initData () {
-      if (this.params && is2DMatrix(this.sourceData)) {
-        let table = { key: unique(`table-`), checked: false, rows: [], filteredRows: {} }
-        for (let i = 0; i < this.sourceData.length; i++) {
-          let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, inPage: true, index: i }
-          tableRow.cells = this.sourceData[i].map(item => {
-            return { data: item, key: unique(`table-`), checked: false }
-          })
-          table.rows.push(tableRow)
-        }
-        this.tableData = table
-        this.$nextTick(this.updatePagination)
-      }
+    onPageSizeChange (size) {
+      if (!this.pagination) return
+      this.pageSize = size
     },
     /**
    * @function 获取Cell的样式数据

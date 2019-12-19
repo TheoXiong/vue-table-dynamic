@@ -81,8 +81,8 @@ const defaultTableParams = {
     method: (value, tableCell) => { return String(tableCell.data).toLocaleLowerCase().includes(String(value).toLocaleLowerCase()) }
   }],
   pagination: true,
-  pageSize: 15,
-  pageSizes: [5, 15, 30, 50, 100]
+  // pageSize: 20,
+  // pageSizes: [5, 15, 30, 50, 100]
 }
 
 for (let i = 0; i < 150; i++) {
@@ -219,9 +219,7 @@ export default {
       }
     },
     togglePagination () {
-      // this.params.pagination = !this.params.pagination
-
-      this.params.pageSize -= 5
+      this.params.pagination = !this.params.pagination
     },
     changeColumnWidth () {
       if (this.params.columnWidth[0].width >= 200) {

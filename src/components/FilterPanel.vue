@@ -1,5 +1,5 @@
 <template>
-  <div class="filter-panel-wrap">
+  <div class="filter-panel-wrap" @click.stop.prevent="">
     <transition 
       name="zoom-in-top" 
       @enter="handleEnter"
@@ -141,7 +141,7 @@ export default {
     },
     handleAfterLeave () {
       this.$emit('after-leave')
-    },  
+    },
     doFilter () {
       if (!this.filterable) return
 
