@@ -109,7 +109,7 @@ export default {
       let columnNum = this.params.data[0].length
        
       if (rowNum >= 200) {
-        return this.showMsg('warning', 'The number of rows cannot be more than 30.')
+        return this.showMsg('warning', 'The number of rows cannot be more than 200.')
       }
 
       let newRow = [rowNum]
