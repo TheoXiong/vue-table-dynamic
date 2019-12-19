@@ -606,7 +606,7 @@ export default {
 | `header` | 表头配置 | `string` | `row`: 首行表头; `column`: 首列表头; 其他: 无 | 无表头  |
 | `border` | 是否带边框 | `boolean` | `true`/`false` | `false` |
 | `stripe` | 是否带条纹 | `boolean` | `true`/`false` | `false` |
-| `highlight` | 高亮的行/列/表单元。值为负数时，表示倒序索引 | {row?:Array`<number>`; column?:Array`<number>`; cell?:Array`<[number,number]>`;} | - | `{}` |
+| `highlight` | 高亮的行/列/表单元。值为负数时，表示倒序索引 | {row?:Array<>; column?:Array<>; cell?:Array<>;} | - | `{}` |
 | `highlightedColor` | 高亮的颜色 | `string` | - | `#EBEBEF` |
 | `showCheck` | 显示多选框。仅当`header`为`row`时，第一行第一列为全选框，否则第一列均为当前行的勾选框 | `boolean` | `true`/`false` | `false` |
 | `enableSearch` | 使用全局搜索功能 | `boolean` | `true`/`false` | `false`   |
@@ -614,10 +614,10 @@ export default {
 | `maxWidth` | 表最大宽度 | `number` | - | `1000` |
 | `height` | 表可视高度。通过配置表格高度，（当`header`为`row`时）可固定表头。当表格超出配置高度，垂直滚动时首行表头会固定不动 | `number` | -  | - |
 | `rowHeight` | 行高  | `number`  | `>= 24` | `30` |
-| `columnWidth` | 指定某一列或某几列的宽度，剩余列宽度均分。`width`值可为绝对值或相对百分比 | Array<{column: number; width: `number/string`;}> | - | - |
+| `columnWidth` | 指定某一列或某几列的宽度，剩余列宽度均分。`width`值可为绝对值或相对百分比 | Array<{column: number; width: number/string;}> | - | - |
 | `sort` | 指定可排序的列 | `Array<number>` | - | - |
-| `filter` | 指定可筛选的列。`column`为列索引; `content`为筛选项;  `method` 为筛选的方法，同时选中多个筛选项时任意一次返回true就会显示 | Array<{column:number; content:Array<{text:string;value:string/number;}>; method:function;}> | - | - |
-| `edit` | 可编辑的 行、列、表单元。负数表示倒序（如`-1`为最后`1`行、列）配置`row`为` 'all'`时，所有行可编辑。编辑会改变当前数据，不会改变传入的源数据| {row?: Array`<number>`; column?: Array`<number>`; cell?: Array<`[number,number]`>;} | -  | - |
+| `filter` | 指定可筛选的列。`column`为列索引; `content`为筛选项;  `method` 为筛选的方法，同时选中多个筛选项时任意一次返回true就会显示 | Array<{column, content, method}> | - | - |
+| `edit` | 可编辑的 行、列、表单元。负数表示倒序（如`-1`为最后`1`行、列）配置`row`为` 'all'`时，所有行可编辑。编辑会改变当前数据，不会改变传入的源数据| {row?: Array<>; column?: Array<>; cell?: Array<>;} | -  | - |
 | `pagination` | 使用分页   | `boolean`  | `true`/`false` | `false`   |
 | `pageSize`  | 每页行数 | `number`   | -   | `10` |
 | `pageSizes` | 每页行数的可选项 | `Array<number>`  | - | |
