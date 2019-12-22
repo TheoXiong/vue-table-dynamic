@@ -1,46 +1,46 @@
 # vue-table-dynamic
 
-English | [简体中文](./README.zh-CN.md)
+简体中文 | [English](./README.md)
 
-[vue-table-dynamic](https://github.com/TheoXiong/vue-table-dynamic) is a vue component of dynamic table. It's designed to respond to data changes in real time, and oriented to the runtime.    
+[vue-table-dynamic](https://github.com/TheoXiong/vue-table-dynamic) 是一个动态表格组件。面向运行时，实时响应源数据变化，动态更新表格内容与形态。具有丰富的特性，所有特性均可按需引入，满足多样化需求。     
 
-## Features
-- Multiple Select
-- Search
-- Sort
-- Filter
-- Pagination
-- Edit
-- Border
-- Stripe
-- Highlight
-- Column Width
-- Configure Header
-- Fixed Header
+## 特性
+- [多选](#多选)
+- [搜索](#搜索)
+- [排序](#排序)
+- [筛选](#筛选)
+- [分页](#分页)
+- [编辑](#编辑])
+- [边框](#边框)
+- [条纹](#条纹)
+- [高亮](#高亮)
+- [配置列宽](#配置列宽)
+- [配置表头](#配置表头)
+- [固定表头](#固定表头)
 
 ## Demo
 [https://theoxiong.github.io/vue-table-dynamic/](https://theoxiong.github.io/vue-table-dynamic/) 
 
 ![Demo](./demo.png)
 
-## Install
+## 安装
 ``` 
 $   npm install vue-table-dynamic --save
 ```
 
-## Usage
+## 使用
 
-### Import
+### 引入模块
 ```
 import VueTableDynamic from 'vue-table-dynamic'
 ```
 
-### Registration
-#### Global registration
+### 注册
+#### 全局注册
 ```
 Vue.use(VueTableDynamic)
 ```
-#### Local registration
+#### 组件内注册
 ```
 <script>
 export default {
@@ -49,9 +49,9 @@ export default {
 </script>
 ```
 
-### Basic Table
+### 基础表格
 
-Basic table usage
+基础表格用法
 
 ![basic](./docs/images/basic.png)
 
@@ -84,12 +84,9 @@ export default {
 </script>
 ```
 
-### Border
+### 边框
 
-Bordered table usage
-
-- `border:`*`true`* with border
-- `border:`*`false`* without border
+配置`border`属性，使用带边框表格
 
 ![border](./docs/images/border.png)   
 
@@ -123,14 +120,11 @@ export default {
 </script>
 ```
 
-### Stripe
+### 条纹
 
-Striped rows
+配置`stripe`属性，显示行条纹            
 
-- `stripe:`*`true`* striped   
-- `stripe:`*`false`* unstriped      
-
-![stripe](./docs/images/stripe.png)
+![stripe](./docs/images/stripe.png)   
 
 ```
 <template>
@@ -164,12 +158,12 @@ export default {
 </script>
 ```
 
-### Highlight
+### 高亮
+    
+配置`highlight`属性，指定行/列/单元高亮              
 
-Highlighted rows/columns/cells
-
-- `highlight:`*`{row?:Array<number>; column?:Array<number>; cell?:Array<[number,number]>;}`* configure highlighted rows, columns, cells. such as: *`{row: [1], column: [1], cell: [[-1, -1]]}`* if negative, the position from the end of the array.
-- `highlightedColor:`*`string`* configure highlighted colors 
+- `highlight`类型为`{row?:Array<number>; column?:Array<number>; cell?:Array<[number,number]>;}`。如：`{row: [1], column: [1], cell: [[-1, -1]]}`，负数表示倒序索引 
+- `highlightedColor:`*`string`* 设置高亮背景色
 
 ![highlight](./docs/images/highlight.png)   
 
@@ -207,14 +201,13 @@ export default {
 </script>
 ```
 
-### Multiple Select
+### 多选
 
-Select multiple rows
+配置`showCheck`属性，启用多选功能   
 
-- `showCheck:`*`boolean`* show checkbox of rows
-- `getCheckedRowDatas:`*`function`* get data for all currently selected rows
-- `setAllRowChecked:`*`function(selected:boolean)`* toggle all selection
-- `select:`*`event`* currently selected/unselected rows            
+- 通过`select`事件和`selection-change`事件，监听用户勾选操作      
+- 通过`getCheckedRowDatas`方法获取当前所有选中的行数据      
+- 通过`setAllRowChecked`方法将选中状态切换为全选或清空选择             
 
 ![checkbox](./docs/images/checkbox.png)   
 
@@ -263,12 +256,11 @@ export default {
 </script>
 ```
 
-### Search
+### 搜索
 
-Filter rows by keyword
+配置`enableSearch`属性，启用全局搜索功能，仅显示匹配到搜索关键字的行 
 
-- `enableSearch:`*`boolean`* enable/disable searching
-- `search:`*`function(value:string)`* manual row filtering     
+- 通过`search`方法可以手动对行搜索过滤，适用于自定义搜索框（配置`enableSearch`为`false`）     
 
 ![search](./docs/images/search.png)   
 
@@ -308,11 +300,11 @@ export default {
 </script>
 ```
 
-### Sort
+### 排序
 
-Sort rows based on specified column data
+配置`sort`属性，启用排序功能，基于列数据对行进行排序   
 
-- `sort:`*`Array<number>`* array members are sortable column indexes. such as: *`[0, 1]`*
+- `sort`类型为`Array<number>`，数组成员为启用排序的列索引。如：`sort: [0, 1]`，基于第0列和第1列排序 
 
 ![sort](./docs/images/sort.png)  
 
@@ -352,14 +344,14 @@ export default {
 </script>
 ```
 
-### Filter
+### 筛选
 
-Filter rows based on specified column data and rule
+通过`filter`配置具有筛选功能的列以及筛选条件   
 
-- `filter:`*`Array<{column:number; content:Array<{text:string; value:string|number;}>; method:function;}>`* specify filterable columns and rules. such as: *`[{column: 0, content: [{text: '> 2', value: 2}], method: (value, cell) => { return cell.data > value }}]`*
-- `filter[].column:` column index
-- `filter[].content:` filter items
-- `filter[].method:` filter rule.     
+- `filter`类型为`Array<{column:number; content:Array<{text:string; value:string|number;}>; method:function;}>`。 如：`[{column: 0, content: [{text: '> 2', value: 2}], method: (value, cell) => { return cell.data > value }}]`            
+- `filter[].column` 列索引     
+- `filter[].content`筛选项    
+- `filter[].method` 筛选的方法，如果是多选的筛选项，对每一条数据会执行多次，任意一次返回 true 就会显示。     
 
 ![filter](./docs/images/filter.png) 
 
@@ -409,13 +401,13 @@ export default {
 </script>
 ```
 
-### Pagination
+### 分页
 
-Table with pagination
+配置`pagination`属性，启用分页功能，支持配置每页显示条数和条数可选项      
 
-- `pagination:`*`boolean`* enable/disable pagination
-- `pageSize?:`*`number`* row count of each page. default: *`10`*
-- `pageSizes?:`*`Array<number>`* options of row count per page. default: *`[10, 20, 50, 100]`*        
+- `pagination:boolean`为`true`时启用分页功能      
+- `pageSize?:number` 每页显示行数，默认为`10`     
+- `pageSizes?:Array<number>` 每页行数可选项，默认为`[10, 20, 50, 100]`    
 
 ![pagination](./docs/images/pagination.png)  
 
@@ -464,16 +456,16 @@ export default {
 </script>
 ```
 
-### Edit
+### 编辑
 
-Editable table     
-Support specifying rows/columns/cells for editing
+配置`edit`属性，启用编辑功能，支持配置某行/某列/某个表格单元可编辑 
 
-- `edit:`*`{row?:Array<number>; column?:Array<number>; cell?:Array<[number,number]>;}`* configure editable rows, columns, cells. such as: *`{row: [1], column: [1], cell: [[-1, -1]]}`*. if negative, the position from the end of the array.
-- `getData:`*`function()`* table data changed after editing, get the latest data by this method.
-- `cell-change:`*`event`* cell data changed event
-- `edit:`*`{row: 'all'}`* all cells can be edited      
-- if `header` is *`'row'`*, the first row is not editable        
+- `edit`类型为`{row?:Array<number>; column?:Array<number>; cell?:Array<[number,number]>;}`。如：`{row: [1], column: [1], cell: [[-1, -1]]}`，负数表示倒序索引     
+- 配置为`{row: 'all'}`时，所有单元均可编辑        
+- 通过`cell-change`事件，监听编辑操作        
+- 编辑会改变当前数据，不会改变传入的源数据    
+- 通过`getData`方法，可获取编辑后的最新数据       
+- 如果配置了 `header: 'row'`，则第一行表头不可编辑       
 
 ![edit](./docs/images/edit.png)  
 
@@ -522,13 +514,13 @@ export default {
 </script>
 ```
 
-### Column width
+### 配置列宽
 
-Configure column width
+通过`columnWidth`属性配置表格列宽度   
 
-- `columnWidth:`*`Array<{column:number; width:number|string;}>`* such as: *`[{column: 0, width: 60}, {column: 3, width: '15%'}]`*
-- `columnWidth[].column` index of column
-- `columnWidth[].width` width of column. number for pixel value, string for percentage
+- `columnWidth`类型为`Array<{column:number; width:number|string;}>`。如：`[{column: 0, width: 60}, {column: 3, width: '15%'}]`
+- `columnWidth[].column` 列索引
+- `columnWidth[].width` 列宽度，支持像素值(number)和百分比(string)
 
 ![width](./docs/images/width.png)  
 
@@ -563,13 +555,15 @@ export default {
 </script>
 ```
 
-### Header Configure
+### 配置表头
 
-- `header:`*`row`* the first row is header
-- `header:`*`column`* the first column is header
-- `header:`*`''`* no header
+通过`header`属性配置表头
 
-![Header](./docs/images/header.png)  
+- `header: row` 首行为表头
+- `header: column` 首列为表头
+- `header: ''` 无表头
+
+![header](./docs/images/header.png)  
 
 ```
 <template>
@@ -602,12 +596,12 @@ export default {
 </script>
 ```
 
-### Fixed Header
+### 固定表头
 
-Fix header by configure the height of table
+通过`height`配置表格高度即可固定表头。当表格超出配置高度，垂直滚动时首行表头会固定不动
 
-- `height:`*`number`* table height
-- when the value of `header` is not *`'row'`*, the first row is a normal row, will not fixed      
+- `height: number` 表格可视高度    
+- 当`header`不为`row`时，首行被视为普通表格行，会跟随滚动   
 
 ![height](./docs/images/height.png)  
 
@@ -656,54 +650,53 @@ export default {
 
 ## API
 
-### Attributes
+### 属性
 
-- `params` is the object that need to be passed to the component `props`
-- the following items are all child properties of the `params` object
-- `data` is required attribute, others are optional
+- 传入到组件的`props`只有`params`对象，下表的属性均为`params`对象的一级属性
+- `data`为必需属性，其他均为可选项
 
-| name | description | type | optional value | default value |
-| -----| ----------- | ---- | -------------- | ------------- |
-| `data`   | source data | `Array<[number, ..., number]>` | - | `[]` |
-| `header` | configure header | `string` | `row`: the first row is header; `column`: the first column is header; `''`: no header | `''`  |
-| `border` | table with border | `boolean` | `true`/`false` | `false` |
-| `stripe` | striped table | `boolean` | `true`/`false` | `false` |
-| `highlight` | configure highlighted rows, columns, cells. such as: {row: `[1]`, column: `[1]`, cell: `[[-1, -1]]`}. if negative, the position from the end of the array. | {row?:Array<>; column?:Array<>; cell?:Array<>;} | - | `{}` |
-| `highlightedColor` | highlighted colors | `string` | - | `#EBEBEF` |
-| `showCheck` | show checkbox of rows. Only when the `header` is `'row'`, the first cell of the first row is the checkbox of all rows. Otherwise, the first cell is the checkbox of the first row | `boolean` | `true`/`false` | `false` |
-| `enableSearch` | enable/disable searching, filter rows by keyword | `boolean` | `true`/`false` | `false`   |
-| `minWidth` | min width of table | `number` | - | `300` |
-| `maxWidth` | max width of table | `number` | - | `1000` |
-| `height` | table height. fix header by configure the height of table | `number` | -  | - |
-| `rowHeight` | row height  | `number`  | `>= 24` | `30` |
-| `columnWidth` | Configure column width | Array<{column:number; width:number/string;}> | - | - |
-| `sort` | sort rows based on specified column data | `Array<number>` | - | - |
-| `filter` | filter rows based on specified column data and rule. `column`: index; `content`: filter items; `method` filter rule. | Array<{column, content, method}> | - | - |
-| `edit` | specifying rows/columns/cells for editing. table data changed after editing, get the latest data by `getData` method | {row?:Array<>; column?:Array<>; cell?:Array<>;} | -  | - |
-| `pagination` | table with pagination | `boolean`  | `true`/`false` | `false`   |
-| `pageSize`  | row count of each page | `number`   | -   | `10` |
-| `pageSizes` | options of row count per page | `Array<number>`  | - | `[10, 20, 50, 100]`|
+| 属性名  | 说明   | 类型      | 可选值      | 默认值    |
+| ----| --------- | ------- | ------------- | --------- |
+| `data`   | 表格源数据 | `Array<[number, ..., number]>` | - | `[]` |
+| `header` | 表头配置 | `string` | `row`: 首行表头; `column`: 首列表头; 其他: 无 | 无表头  |
+| `border` | 是否带边框 | `boolean` | `true`/`false` | `false` |
+| `stripe` | 是否带条纹 | `boolean` | `true`/`false` | `false` |
+| `highlight` | 高亮的行/列/表单元。值为负数时，表示倒序索引 | {row?:Array<>; column?:Array<>; cell?:Array<>;} | - | `{}` |
+| `highlightedColor` | 高亮的颜色 | `string` | - | `#EBEBEF` |
+| `showCheck` | 显示多选框。仅当`header`为`row`时，第一行第一列为全选框，否则第一列均为当前行的勾选框 | `boolean` | `true`/`false` | `false` |
+| `enableSearch` | 使用全局搜索功能 | `boolean` | `true`/`false` | `false`   |
+| `minWidth` | 表最小宽度 | `number` | - | `300` |
+| `maxWidth` | 表最大宽度 | `number` | - | `1000` |
+| `height` | 表可视高度。通过配置表格高度，（当`header`为`row`时）可固定表头。当表格超出配置高度，垂直滚动时首行表头会固定不动 | `number` | -  | - |
+| `rowHeight` | 行高  | `number`  | `>= 24` | `30` |
+| `columnWidth` | 指定某一列或某几列的宽度，剩余列宽度均分。`width`值可为绝对值或相对百分比 | Array<{column: number; width: number/string;}> | - | - |
+| `sort` | 指定可排序的列 | `Array<number>` | - | - |
+| `filter` | 指定可筛选的列。`column`为列索引; `content`为筛选项;  `method` 为筛选的方法，同时选中多个筛选项时任意一次返回true就会显示 | Array<{column, content, method}> | - | - |
+| `edit` | 可编辑的 行、列、表单元。负数表示倒序（如`-1`为最后`1`行、列）配置`row`为` 'all'`时，所有行可编辑。编辑会改变当前数据，不会改变传入的源数据| {row?: Array<>; column?: Array<>; cell?: Array<>;} | -  | - |
+| `pagination` | 使用分页   | `boolean`  | `true`/`false` | `false`   |
+| `pageSize`  | 每页行数 | `number`   | -   | `10` |
+| `pageSizes` | 每页行数的可选项 | `Array<number>`  | - | |
 
-### Methods
+### 方法
 
-| method name  | description     | parameters       | return  |
+| 方法名  | 说明     | 参数       | 返回  |
 | ------- | -------- | --------- | ---------- |
-| `getData`  | table data changed after editing, get the latest data by this method | - | `Array<[number, ..., number]>` |
-| `getCheckedRowDatas` | get data for all currently selected rows | `includeWhenHeaderInfirstRow: boolean` include header row when the first row is header，default is `false` | `Array<[number, ..., number]>` |
-| `getRowData` | get row data by index | `rowIndex:number` index；`isCurrent: boolean` is the index sorted，default is `false` | `Array<number>` |
-| `search`  | manual row filtering | `searchValue:string` keyword | - |
-| `clearSearch`  | clear searching, show all rows | -  | -  |
+| `getData`  | 获取表格数据。当使用编辑功能时，可使用此方法获取编辑后的最新数据 | 无    | `Array<[number, ..., number]>` |
+| `getCheckedRowDatas` | 使用多选功能时，获取选中行的数据 | `includeWhenHeaderInfirstRow: boolean` 当首行为表头时，是否包含表头行，默认`false` | `Array<[number, ..., number]>` |
+| `getRowData` | 根据行索引获取指定行的数据  | `rowIndex: number` 行索引；`isCurrent: boolean`索引是否为排序后的索引，默认false，即原始索引 | `Array<number>` |
+| `search`  | 手动对行搜索过滤，适用于自定义搜索框（配置`enableSearch`为`false`） | `searchValue: string`搜索的关键字   | 无 |
+| `clearSearch`  | 取消搜索过滤，显示所有行 | 无  | 无  |
 
-### Events
+### 事件
 
-| event name    | description   | parameters |
-| ------------- | ------------- | ---------- |
-| `select`  | event when selecting a row | `checked: boolean`; ` index: number`; `data: Array<string\number>` |
-| `select-all` | event when clicking the checkbox in table header | `isCheckedAll: boolean` |
-| `row-click` | event when clicking a row | ` index:number`; `data:Array<string\number>` |
-| `cell-click` | event when clicking a cell | `rowIndex:number`; `columnIndex:number`; ` data:string\number` |
-| `cell-change` | event when edting a cell | `rowIndex:number`; `columnIndex:number`; `data:string\number` |
-| `sort-change` | event when sorting | `index: number`; `value: string` |
+| 事件名        | 说明                     | 回调参数                                                     |
+| ------------- | ------------------------ | -----------------------------------------------------------|
+| `select`      | 行的选中/取消选中        | `checked: boolean`; ` index: number`; `data: Array<string\number>` |
+| `select-all`  | 全选/取消全选            | `isCheckedAll: boolean`                                      |
+| `row-click`   | 点击行                   | ` index: number`; ` data: Array<string\number>`              |
+| `cell-click`  | 点击表格单元             | `rowIndex: number`;  `columnIndex: number`; ` data: string\number` |
+| `cell-change` | 表格单元数据（编辑）改变 | `rowIndex: number`;  `columnIndex: number`; ` data: string\number` |
+| `sort-change` | 排序                     | `index: number`;  `value: string`                            |
 
 
 

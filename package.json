@@ -1,6 +1,6 @@
 {
   "name": "vue-table-dynamic",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A vue component of dynamic table",
   "main": "dist/index.min.js",
   "scripts": {
