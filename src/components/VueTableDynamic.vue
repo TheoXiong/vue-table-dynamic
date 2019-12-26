@@ -10,12 +10,6 @@
         <vue-input v-if="enableSearch" class="tools-search" v-model="searchValue" placeholder="Search">
           <i class="iconfont iconsearch" slot="prefix"></i>
         </vue-input>
-        <vue-button v-if="enableUpload" class="tools-upload" size="mini" type="text" @click="onUpload">
-          <span><i class="iconfont iconupload"></i></span>
-        </vue-button>
-        <vue-button v-if="enableDownload" class="tools-download" size="mini" type="text" @click="onDownload">
-          <span><i class="iconfont icondownload"></i></span>
-        </vue-button>
       </div>
       <div 
         class="table"
@@ -86,7 +80,7 @@
         </div>
         <!-- Table Body -->
         <div class="table-body" :style="{ height: height }">
-          <vuescroll :ops="scrollBarOpts" ref="vuescroll">
+          <!-- <vuescroll :ops="scrollBarOpts" ref="vuescroll"> -->
             <div v-for="(tableRow, i) in tableData.rows" :key="i"> 
               <div
                 v-show="tableRow.show && !tableRow.filtered && !(pagination && !tableRow.inPage) && !(i === 0 && headerInfirstRow)" 
@@ -132,7 +126,7 @@
                 </div>
               </div>
             </div>
-          </vuescroll>
+          <!-- </vuescroll> -->
         </div>
       </div>
       <!-- Table Pagination -->
@@ -155,8 +149,7 @@
 <script>
 import { unemptyArray, is2DMatrix } from '../utils/array.js'
 import { unique } from '../utils/unique.js'
-import vuescroll from 'vuescroll'
-import VueButton from './VueButton.vue'
+// import vuescroll from 'vuescroll'
 import VueInput from './VueInput.vue'
 import FilterPanel from './FilterPanel.vue'
 import VuePagination from './VuePagination.vue'
@@ -193,10 +186,6 @@ export default {
     // params.highlight: (Object) 配置高亮背景的 行/列/表单元
     // params.highlightedColor: (String) 高亮背景的颜色。
     // params.showCheck: (Boolean) 是否在第一列前显示多选（勾选）框。 默认不显示。  注：仅当params.header为'row时，第一行第一列为'全选'框，否则第一列均为当前行的勾选框
-    // params.enableUpload: (Boolean) 启用上传功能。默认禁用
-    // params.onUpload: (Function) 点击上传时的回调
-    // params.enableDownload: (Boolean) 启用下载功能。默认禁用
-    // params.onDownload: (Function) 点击下载时的回调
     // params.enableSearch: (Boolean) 启用搜索功能。默认禁用
     // params.minWidth: (Number) table最小宽度。默认300
     // params.maxWidth: (Number) table最大宽度。默认1000
@@ -246,29 +235,11 @@ export default {
     showCheck () {
       return !!(this.params && this.params.showCheck)
     },
-    enableUpload () {
-      return !!(this.params && this.params.enableUpload)
-    },
-    uploadHandler () {
-      if (this.params && typeof this.params.onUpload === 'function') {
-        return this.params.onUpload
-      }
-      return () => {}
-    },
-    enableDownload () {
-      return !!(this.params && this.params.enableDownload)
-    },
-    downloadHandler () {
-      if (this.params && typeof this.params.onDownload === 'function') {
-        return this.params.onDownload
-      }
-      return () => {}
-    },
     enableSearch () {
       return !!(this.params && this.params.enableSearch)
     },
     enableTools () {
-      return this.enableUpload || this.enableDownload || this.enableSearch
+      return this.enableSearch
     },
     minWidth () {
       if (this.params && typeof this.params.minWidth === 'number' && this.params.minWidth > 0) {
@@ -610,38 +581,6 @@ export default {
     onCellKeyEnter (e) {
     },
     /**
-   * @function 点击上传
-   */
-    onUpload () {
-      if (this.enableUpload) {
-        let datas = []
-        if (this.showCheck) {
-          datas = this.getCheckedRowDatas(true)
-        } else {
-          datas = this.getData()
-        }
-
-        this.$emit('upload', datas)
-        this.uploadHandler(datas)
-      }
-    },
-    /**
-   * @function 点击下载
-   */
-    onDownload () {
-      if (this.enableDownload) {
-        let datas = []
-        if (this.showCheck) {
-          datas = this.getCheckedRowDatas(true)
-        } else {
-          datas = this.getData()
-        }
-
-        this.$emit('download', datas)
-        this.downloadHandler(datas)
-      }
-    },
-    /**
    * @function 基于某一列数据排序
    * @param {Number} index 列索引
    * @param {String} value ascending：升序； descending：降序
@@ -938,7 +877,8 @@ export default {
       return 0
     }
   },
-  components: { VueButton, VueInput, FilterPanel, VuePagination, vuescroll }
+  components: { VueInput, FilterPanel, VuePagination }
+  // components: { VueInput, FilterPanel, VuePagination, vuescroll }
 }
 </script>
 
@@ -968,10 +908,7 @@ $borderColor: #DCDFE6;
   background-color: transparent;
 }
 .table-row.is-header{
-  overflow: visible;
-  .table-cell{
-    overflow: visible;
-  }
+  overflow: hidden;
 }
 .table-row.is-header, 
 .table-cell.is-header {
@@ -1063,13 +1000,6 @@ $borderColor: #DCDFE6;
 
 .table-tools{
   padding: 8px 0px;
-}
-.tools-upload, .tools-download{
-  margin-right: 8px;
-}
-.tools-upload i.iconfont,
-.tools-download i.iconfont{
-  font-size: 18px;
 }
 
 .tools-search{

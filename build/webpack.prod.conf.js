@@ -10,5 +10,6 @@ module.exports = merge(baseWebpackConfig, {
     libraryTarget: 'umd',
     umdNamedDefine: true,
     filename: 'index.min.js'
-  }
+  },
+  devtool: ''
 })

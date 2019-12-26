@@ -6,20 +6,6 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "3214693",
-      "name": "descending",
-      "font_class": "descending",
-      "unicode": "e64c",
-      "unicode_decimal": 58956
-    },
-    {
-      "icon_id": "3214694",
-      "name": "ascending",
-      "font_class": "ascending",
-      "unicode": "e64d",
-      "unicode_decimal": 58957
-    },
-    {
       "icon_id": "4767011",
       "name": "right",
       "font_class": "right",
@@ -34,32 +20,11 @@
       "unicode_decimal": 59373
     },
     {
-      "icon_id": "4767013",
-      "name": "up",
-      "font_class": "up",
-      "unicode": "e7ee",
-      "unicode_decimal": 59374
-    },
-    {
       "icon_id": "4767014",
       "name": "down",
       "font_class": "down",
       "unicode": "e7eb",
       "unicode_decimal": 59371
-    },
-    {
-      "icon_id": "4767025",
-      "name": "upload",
-      "font_class": "upload",
-      "unicode": "e7f0",
-      "unicode_decimal": 59376
-    },
-    {
-      "icon_id": "4767031",
-      "name": "download",
-      "font_class": "download",
-      "unicode": "e7ef",
-      "unicode_decimal": 59375
     },
     {
       "icon_id": "4767093",
@@ -81,13 +46,6 @@
       "font_class": "search",
       "unicode": "e8ef",
       "unicode_decimal": 59631
-    },
-    {
-      "icon_id": "8827222",
-      "name": "loading",
-      "font_class": "loading",
-      "unicode": "e93d",
-      "unicode_decimal": 59709
     }
   ]
 }
