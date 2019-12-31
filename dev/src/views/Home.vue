@@ -59,7 +59,7 @@ const random = (length) => {
 
 const defaultTableParams = {
   data: [
-    ['Index', `Data1`, `Data22222222222222222222222222222222222222222222`, `Data3`]
+    ['Index', `Data1`, `Data2`, `Data3`]
   ],
   header: 'row',
   height: '',
@@ -323,5 +323,9 @@ export default {
   }
 }
 
-
+</style>
+<style>
+.v-show-border{
+  border: 1px solid blue;
+}
 </style>

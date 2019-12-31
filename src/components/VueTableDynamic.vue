@@ -1,33 +1,32 @@
 <template>
-  <div class="data-table">
+  <div class="v-table-dynamic">
     <div 
-      v-if="tableData && tableData.rows && tableData.rows.length > 0" 
-      class="table-container"
+      v-if="tableData && tableData.rows && tableData.rows.length > 0"
       :style="{ minWidth: minWidth + 'px', maxWidth: maxWidth + 'px' }"
     >
       <!-- Table Tools -->
-      <div class="table-tools flex-c-s" v-if="enableTools">
+      <div class="v-table-tools flex-c-s" v-if="enableTools">
         <vue-input v-if="enableSearch" class="tools-search" v-model="searchValue" placeholder="Search">
           <i class="iconfont iconsearch" slot="prefix"></i>
         </vue-input>
       </div>
       <div 
-        class="table"
-        :class="{ 'border':tableBorder }"
+        class="v-table"
+        :class="{ 'v-show-border':tableBorder }"
         :style="{ minWidth: minWidth + 'px', maxWidth: maxWidth + 'px' }"
       >
         <!-- Table Header -->
         <div 
           v-if="headerInfirstRow" 
-          class="table-row flex-c is-header"
-          :class="{ 'is-striped': rowStripe, 'border':tableBorder }"
+          class="v-table-row flex-c is-header"
+          :class="{ 'is-striped': rowStripe, 'v-show-border':tableBorder }"
           :style="{ height: rowHeight + 'px' }"
           @click="onClickRow(tableData.rows[0], 0)"
         >
           <div 
             v-if="showCheck" 
             class="table-check flex-c-c" 
-            :class="{ 'border':tableBorder }"
+            :class="{ 'v-show-border':tableBorder }"
             :style="{ backgroundColor: isHighlighted(0, NaN) ? highlightedColor : 'transparent' }"
           > 
             <div 
@@ -42,7 +41,7 @@
           <div 
             v-for="(tableCell, j) in tableData.rows[0].cells" :key="j" 
             class="table-cell flex-c-s" 
-            :class="{ 'border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
+            :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
             :style="getCellStyle(0, j)"
             @click="onClickCell(tableCell, 0, j)"
           >
@@ -79,15 +78,15 @@
           </div>
         </div>
         <!-- Table Body -->
-        <div class="table-body" :style="{ height: height }">
-          <!-- <vuescroll :ops="scrollBarOpts" ref="vuescroll"> -->
+        <div class="v-table-body" :style="{ height: height }">
+          <vue-scrollbar ref="scrollbar">
             <div v-for="(tableRow, i) in tableData.rows" :key="i"> 
               <div
                 v-show="tableRow.show && !tableRow.filtered && !(pagination && !tableRow.inPage) && !(i === 0 && headerInfirstRow)" 
-                class="table-row flex-c"
+                class="v-table-row flex-c"
                 :class="{ 
                   'is-striped': (rowStripe && i % 2 === 0), 
-                  'border':tableBorder
+                  'v-show-border':tableBorder
                 }"
                 :style="{ height: rowHeight + 'px' }"
                 @click="onClickRow(tableRow, tableRow.index)"
@@ -95,7 +94,7 @@
                 <div 
                   v-if="showCheck" 
                   class="table-check flex-c-c" 
-                  :class="{ 'border':tableBorder }"
+                  :class="{ 'v-show-border':tableBorder }"
                   :style="{ backgroundColor: isHighlighted(tableRow.index, NaN) ? highlightedColor : 'transparent' }"
                 > 
                   <div 
@@ -109,7 +108,7 @@
                 <div 
                   v-for="(tableCell, j) in tableRow.cells" :key="j" 
                   class="table-cell flex-c-s" 
-                  :class="{ 'border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
+                  :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
                   :style="getCellStyle(tableRow.index, j)"
                   @click="onClickCell(tableCell, tableRow.index, j)"
                 >
@@ -126,7 +125,7 @@
                 </div>
               </div>
             </div>
-          <!-- </vuescroll> -->
+          </vue-scrollbar>
         </div>
       </div>
       <!-- Table Pagination -->
@@ -149,7 +148,7 @@
 <script>
 import { unemptyArray, is2DMatrix } from '../utils/array.js'
 import { unique } from '../utils/unique.js'
-// import vuescroll from 'vuescroll'
+import VueScrollbar from './scrollbar/VueScrollbar'
 import VueInput from './VueInput.vue'
 import FilterPanel from './FilterPanel.vue'
 import VuePagination from './VuePagination.vue'
@@ -164,15 +163,6 @@ export default {
       tableData: {},
       searchValue: '',
       activatedSort: {},
-      scrollBarOpts: {
-        scrollPanel: {
-          scrollingX: false
-        },
-        bar: {
-          background: '#DFDFDF',
-          opacity: 0.8
-        }
-      },
       totalPages: 0,
       pageSize: 0
     }
@@ -877,15 +867,14 @@ export default {
       return 0
     }
   },
-  components: { VueInput, FilterPanel, VuePagination }
-  // components: { VueInput, FilterPanel, VuePagination, vuescroll }
+  components: { VueInput, FilterPanel, VuePagination, VueScrollbar }
 }
 </script>
 
 <style lang="scss" scoped>
 $borderColor: #DCDFE6;
 
-.data-table{
+.v-table-dynamic{
   width: 100%;
   display: block;
   box-sizing: border-box;
@@ -893,35 +882,37 @@ $borderColor: #DCDFE6;
   font-size: 13px;
   color: #606266;
 }
-.table{
+.v-table{
   box-sizing: border-box;
+  border: none;
   // border-bottom: 1px solid $borderColor;
 }
 
-.table.border{
+.v-table.v-show-border{
   border-top: 1px solid $borderColor;
 }
 
-.table-row{
+.v-table-row{
   box-sizing: border-box;
+  border: none;
   border-bottom: 1px solid $borderColor;
   background-color: transparent;
 }
-.table-row.is-header{
+.v-table-row.is-header{
   overflow: hidden;
 }
-.table-row.is-header, 
+.v-table-row.is-header, 
 .table-cell.is-header {
   font-weight: 600;
 }
-.table-row.is-striped{
+.v-table-row.is-striped{
   background-color: #F9F9F9;
 }
-.table-row.border{
+.v-table-row.v-show-border{
   border-right: 1px solid $borderColor;
 }
 
-.table-row:hover{
+.v-table-row:hover{
   background-color: #F5F7FA;
 }
 
@@ -933,6 +924,7 @@ $borderColor: #DCDFE6;
   -webkit-flex: 0 0 50px;
   -ms-flex: 0 0 50px;
   flex: 0 0 50px;
+  border: none;
 }
 
 .table-check-all,
@@ -972,10 +964,11 @@ $borderColor: #DCDFE6;
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
+  border: none;
 }
 
-.table-check.border,
-.table-cell.border{
+.table-check.v-show-border,
+.table-cell.v-show-border{
   border-left: 1px solid $borderColor;
 }
 
@@ -998,7 +991,7 @@ $borderColor: #DCDFE6;
   text-overflow: ellipsis;
 }
 
-.table-tools{
+.v-table-tools{
   padding: 8px 0px;
 }
 
