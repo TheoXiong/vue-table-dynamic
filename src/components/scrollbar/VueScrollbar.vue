@@ -88,14 +88,15 @@ export default {
         let canScrollY = this.viewerHeight > this.wrapperHeight
         let canScrollX = this.viewerWidth > this.wrapperWidth
 
+        this.allowBodyScroll = true
         if (canScrollY && !shifted) this.normalizeVertical(nextY)
         if (shifted && canScrollX) this.normalizeHorizontal(nextX)
-      })
 
-      if (!this.allowBodyScroll) {
-        e.preventDefault()
-        e.stopPropagation()
-      }
+        if (!this.allowBodyScroll) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      })
     },
     onResize () {
       this.calculateSize(() => {
