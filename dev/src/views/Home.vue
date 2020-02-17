@@ -4,24 +4,30 @@
       <nav-menu></nav-menu>
     </header>
     <aside>
-      <vue-button class="aside-btns" size="mini" @click="addRow">Add Row</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="deleteRow">Delete Row</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="addColumn">Add Column</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="deleteColumn">Delete Column</vue-button>
-      <div class="aside-line"></div>
-      <vue-button class="aside-btns" size="mini" @click="fixedHeader">Fixed Header</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleHeader">Toggle Header</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleBorder">Toggle Border</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleStripe">Toggle Stripe</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleHighlight">Toggle Highlight</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleSelect">Toggle Select</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleSearch">Toggle Search</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleFilter">Toggle Filter</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
-      <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
-      <div class="aside-line"></div>
-      <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
+      <vuescroll :ops="scrollBarOpts" ref="vuescroll">
+        <vue-button class="aside-btns" size="mini" @click="addRow">Add Row</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="deleteRow">Delete Row</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="addColumn">Add Column</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="deleteColumn">Delete Column</vue-button>
+        <div class="aside-line"></div>
+        <vue-button class="aside-btns" size="mini" @click="fixedHeader">Fixed Header</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleHeader">Toggle Header</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleBorder">Toggle Border</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleStripe">Toggle Stripe</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleHighlight">Toggle Highlight</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleSelect">Toggle Select</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleSearch">Toggle Search</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleFilter">Toggle Filter</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
+        <div class="aside-line"></div>
+        <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toPage">To Random Page</vue-button>
+        <div class="aside-line"></div>
+        <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="changeHeaderHeight">Change Header Height</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="changeRowHeight">Change Row Height</vue-button>
+      </vuescroll>
     </aside>
     <section>
       <vuescroll :ops="scrollBarOpts" ref="vuescroll">
@@ -59,10 +65,15 @@ const random = (length) => {
 
 const defaultTableParams = {
   data: [
-    ['Index', `Data1`, `Data2`, `Data3`]
+    [' Index', `Data1`, `Data2`, `Data3`]
   ],
   header: 'row',
   height: '',
+  headerHeight: 30,
+  rowHeight: 30,
+  // wordWrap: 'break-word',
+  // whiteSpace: 'normal',
+  // textOverflow: 'clip',
   border: true,
   stripe: true,
   showCheck: true,
@@ -100,7 +111,9 @@ export default {
         scrollPanel: { scrollingX: false },
         bar: { background: '#DFDFDF', opacity: 0.8 }
       },
-      widthIncrement: 1
+      widthIncrement: 1,
+      heightIncrement: 1,
+      rowHeightIncrement: 1
     }
   },
   methods: {
@@ -221,6 +234,12 @@ export default {
     togglePagination () {
       this.params.pagination = !this.params.pagination
     },
+    toPage () {
+      if (this.$refs && this.$refs.table) {
+        let target = Math.floor(Math.random() * 5 + 1)
+        this.$refs.table.toPage(target)
+      }
+    },
     changeColumnWidth () {
       if (this.params.columnWidth[0].width >= 200) {
         this.widthIncrement = -1
@@ -228,6 +247,22 @@ export default {
         this.widthIncrement = 1
       }
       this.params.columnWidth[0].width += 10 * this.widthIncrement
+    },
+    changeHeaderHeight () {
+      if (this.params.headerHeight >= 80) {
+        this.heightIncrement = -1
+      } else if (this.params.headerHeight <= 30) {
+        this.heightIncrement = 1
+      }
+      this.params.headerHeight += 5 * this.heightIncrement
+    },
+    changeRowHeight () {
+      if (this.params.rowHeight >= 80) {
+        this.rowHeightIncrement = -1
+      } else if (this.params.rowHeight <= 30) {
+        this.rowHeightIncrement = 1
+      }
+      this.params.rowHeight += 5 * this.rowHeightIncrement
     },
     reset () {
       this.params = cloneDeep(defaultTableParams)

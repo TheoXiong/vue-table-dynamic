@@ -20,7 +20,7 @@
           v-if="headerInfirstRow" 
           class="v-table-row flex-c is-header"
           :class="{ 'is-striped': rowStripe, 'v-show-border':tableBorder }"
-          :style="{ height: rowHeight + 'px' }"
+          :style="{ height: headerHeight + 'px' }"
           @click="onClickRow(tableData.rows[0], 0)"
         >
           <div 
@@ -45,10 +45,13 @@
             :style="getCellStyle(0, j)"
             @click="onClickCell(tableCell, 0, j)"
           >
-            <span class="table-cell-content">
+            <span 
+              class="table-cell-content" 
+              :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+            >
               {{ tableCell.data }}
             </span>
-            <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: rowHeight + 'px' }">
+            <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: '30px' }">
               <i 
                 class="sort-btns sort-ascending" 
                 :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
@@ -65,7 +68,7 @@
             <span 
               v-if="filterConfig[j]" 
               class="table-filter flex-c-c" 
-              :style="{ height: rowHeight + 'px' }" 
+              :style="{ height: headerHeight + 'px' }" 
             >
               <filter-panel 
                 :content="filterConfig[j].content" 
@@ -115,6 +118,7 @@
                   <span 
                     class="table-cell-content"
                     :class="{'fill-width': i !== 0}"
+                    :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
                     :contenteditable="isEditable(tableRow.index, j)"
                     :id="tableCell.key"
                     @blur="onCellBlur(tableCell, tableRow.index, j)"
@@ -156,6 +160,10 @@ import '../assets/css/flex.css'
 import '../assets/iconfont/iconfont.css'
 const trim = require('lodash.trim')
 
+const wordWrapList = ['normal', 'break-word']
+const whiteSpaceList = ['nowrap', 'normal', 'pre', 'pre-wrap', 'pre-line']
+const textOverflowList = ['clip', 'ellipsis']
+
 export default {
   name: 'VueTableDynamic',
   data () {
@@ -175,11 +183,15 @@ export default {
     // params.stripe: (Boolean) 行背景间隔条纹显示。默认false
     // params.highlight: (Object) 配置高亮背景的 行/列/表单元
     // params.highlightedColor: (String) 高亮背景的颜色。
+    // params.wordWrap: (String) 表格单元中文本的长单词换行 'normal/break-word'  默认normal
+    // params.whiteSpace: (String) 表格单元中文本的空白处理 'nowrap/normal/pre/pre-wrap/pre-line'  默认nowrap
+    // params.textOverflow: (String) 表格单元中文本溢出处理 'clip/ellipsis'  默认clip
     // params.showCheck: (Boolean) 是否在第一列前显示多选（勾选）框。 默认不显示。  注：仅当params.header为'row时，第一行第一列为'全选'框，否则第一列均为当前行的勾选框
     // params.enableSearch: (Boolean) 启用搜索功能。默认禁用
     // params.minWidth: (Number) table最小宽度。默认300
     // params.maxWidth: (Number) table最大宽度。默认1000
     // params.height: (Number) table高度。
+    // params.headerHeight: (Number) table row高度。默认30
     // params.rowHeight: (Number) table row高度。默认30
     // params.columnWidth: (Array) 指定某一列或某几列的宽度，剩余列宽度均分. [{column: 0, width: 80}, {column: 1, width: '20%'}]
     // params.sort: (Array) 指定以某列为基准排序。如指定第1列和第二列可排序：[0, 1]。 只在配置了第一行作为表头时有效
@@ -216,6 +228,24 @@ export default {
       }
       return '#EBEBEF'
     },
+    wordWrap () {
+      if (this.params && this.params.wordWrap && wordWrapList.includes(this.params.wordWrap)) {
+        return this.params.wordWrap
+      }
+      return wordWrapList[0]
+    },
+    whiteSpace () {
+      if (this.params && this.params.whiteSpace && whiteSpaceList.includes(this.params.whiteSpace)) {
+        return this.params.whiteSpace
+      }
+      return whiteSpaceList[0]
+    },
+    textOverflow () {
+      if (this.params && this.params.textOverflow && textOverflowList.includes(this.params.textOverflow)) {
+        return this.params.textOverflow
+      }
+      return textOverflowList[0]
+    },
     headerInfirstRow () {
       return !!(this.params && this.params.header === 'row')
     },
@@ -242,6 +272,12 @@ export default {
         return this.params.maxWidth
       }
       return 1000
+    },
+    headerHeight () {
+      if (this.params && typeof this.params.headerHeight === 'number' && this.params.headerHeight >= 24) {
+        return this.params.headerHeight
+      }
+      return 30
     },
     rowHeight () {
       if (this.params && typeof this.params.rowHeight === 'number' && this.params.rowHeight >= 24) {
@@ -415,6 +451,18 @@ export default {
     onPageSizeChange (size) {
       if (!this.pagination) return
       this.pageSize = size
+    },
+    /**
+   * @function 跳转到目标页
+   * @param {Number} tagetPage 页编号
+   */
+    toPage (tagetPage) {
+      if (!this.pagination) return
+      if (!(typeof tagetPage === 'number' && tagetPage > 0)) return
+
+      if (this.$refs && this.$refs.tablePagination) {
+        this.$refs.tablePagination.toPage(tagetPage)
+      }
     },
     /**
    * @function 获取Cell的样式数据
@@ -986,9 +1034,6 @@ $borderColor: #DCDFE6;
 .table-cell-content{
   position: relative;
   overflow: hidden;
-  word-wrap: normal;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .v-table-tools{

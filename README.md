@@ -670,11 +670,15 @@ export default {
 | `stripe` | striped table | `boolean` | `true`/`false` | `false` |
 | `highlight` | configure highlighted rows, columns, cells. such as: {row: `[1]`, column: `[1]`, cell: `[[-1, -1]]`}. if negative, the position from the end of the array. | {row?:Array<>; column?:Array<>; cell?:Array<>;} | - | `{}` |
 | `highlightedColor` | highlighted colors | `string` | - | `#EBEBEF` |
+| `wordWrap` | word-wrap style of table cell | `string` | `normal/break-word` | `normal` |
+| `whiteSpace` | white-space style of table cell | `string` | `nowrap/normal/pre/pre-wrap/pre-line` | `nowrap` |
+| `textOverflow` | text-overflow style of table cell | `string` | `clip/ellipsis` | `clip` |
 | `showCheck` | show checkbox of rows. Only when the `header` is `'row'`, the first cell of the first row is the checkbox of all rows. Otherwise, the first cell is the checkbox of the first row | `boolean` | `true`/`false` | `false` |
 | `enableSearch` | enable/disable searching, filter rows by keyword | `boolean` | `true`/`false` | `false`   |
 | `minWidth` | min width of table | `number` | - | `300` |
 | `maxWidth` | max width of table | `number` | - | `1000` |
 | `height` | table height. fix header by configure the height of table | `number` | -  | - |
+| `headerHeight` | header height  | `number`  | `>= 24` | `30` |
 | `rowHeight` | row height  | `number`  | `>= 24` | `30` |
 | `columnWidth` | Configure column width | Array<{column:number; width:number/string;}> | - | - |
 | `sort` | sort rows based on specified column data | `Array<number>` | - | - |
@@ -693,6 +697,7 @@ export default {
 | `getRowData` | get row data by index | `rowIndex:number` index；`isCurrent: boolean` is the index sorted，default is `false` | `Array<number>` |
 | `search`  | manual row filtering | `searchValue:string` keyword | - |
 | `clearSearch`  | clear searching, show all rows | -  | -  |
+| `toPage`  | switch to the target page, when pagination is enable | `tagetPage:number` page to switch  | -  |
 
 ### Events
 

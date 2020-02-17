@@ -663,11 +663,15 @@ export default {
 | `stripe` | 是否带条纹 | `boolean` | `true`/`false` | `false` |
 | `highlight` | 高亮的行/列/表单元。值为负数时，表示倒序索引 | {row?:Array<>; column?:Array<>; cell?:Array<>;} | - | `{}` |
 | `highlightedColor` | 高亮的颜色 | `string` | - | `#EBEBEF` |
+| `wordWrap` | 表格单元文本的word-wrap样式 | `string` | `normal/break-word` | `normal` |
+| `whiteSpace` | 表格单元文本的white-space样式 | `string` | `nowrap/normal/pre/pre-wrap/pre-line` | `nowrap` |
+| `textOverflow` | 表格单元文本的text-overflow样式 | `string` | `clip/ellipsis` | `clip` |
 | `showCheck` | 显示多选框。仅当`header`为`row`时，第一行第一列为全选框，否则第一列均为当前行的勾选框 | `boolean` | `true`/`false` | `false` |
 | `enableSearch` | 使用全局搜索功能 | `boolean` | `true`/`false` | `false`   |
 | `minWidth` | 表最小宽度 | `number` | - | `300` |
 | `maxWidth` | 表最大宽度 | `number` | - | `1000` |
 | `height` | 表可视高度。通过配置表格高度，（当`header`为`row`时）可固定表头。当表格超出配置高度，垂直滚动时首行表头会固定不动 | `number` | -  | - |
+| `headerHeight` | 表头高度  | `number`  | `>= 24` | `30` |
 | `rowHeight` | 行高  | `number`  | `>= 24` | `30` |
 | `columnWidth` | 指定某一列或某几列的宽度，剩余列宽度均分。`width`值可为绝对值或相对百分比 | Array<{column: number; width: number/string;}> | - | - |
 | `sort` | 指定可排序的列 | `Array<number>` | - | - |
@@ -686,6 +690,7 @@ export default {
 | `getRowData` | 根据行索引获取指定行的数据  | `rowIndex: number` 行索引；`isCurrent: boolean`索引是否为排序后的索引，默认false，即原始索引 | `Array<number>` |
 | `search`  | 手动对行搜索过滤，适用于自定义搜索框（配置`enableSearch`为`false`） | `searchValue: string`搜索的关键字   | 无 |
 | `clearSearch`  | 取消搜索过滤，显示所有行 | 无  | 无  |
+| `toPage`  | (分页时)跳转到目标页 | `tagetPage:number` 目标页索引  | -  |
 
 ### 事件
 
