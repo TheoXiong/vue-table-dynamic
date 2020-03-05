@@ -20,6 +20,7 @@
         <vue-button class="aside-btns" size="mini" @click="toggleFilter">Toggle Filter</vue-button>
         <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
         <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleFixed">Toggle Fixed Column</vue-button>
         <div class="aside-line"></div>
         <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
         <vue-button class="aside-btns" size="mini" @click="toPage">To Random Page</vue-button>
@@ -27,6 +28,9 @@
         <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
         <vue-button class="aside-btns" size="mini" @click="changeHeaderHeight">Change Header Height</vue-button>
         <vue-button class="aside-btns" size="mini" @click="changeRowHeight">Change Row Height</vue-button>
+        <div class="aside-line"></div>
+        <vue-button class="aside-btns" size="mini" @click="getData">Get Data</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="getCheckedRowDatas">Checked Row Data</vue-button>
       </vuescroll>
     </aside>
     <section>
@@ -78,7 +82,8 @@ const defaultTableParams = {
   stripe: true,
   showCheck: true,
   enableSearch: true,
-  columnWidth: [{column: 0, width: 100}],
+  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }, {column: 3, width: 400 }],
+  fixed: '',
   sort: [0, 1],
   edit: {},
   highlight: {},
@@ -96,7 +101,7 @@ const defaultTableParams = {
   // pageSizes: [5, 15, 30, 50, 100]
 }
 
-for (let i = 0; i < 150; i++) {
+for (let i = 0; i < 15; i++) {
   defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
 }
 
@@ -176,7 +181,7 @@ export default {
       if (this.params.height) {
         this.params.height = ''
       } else {
-        this.params.height = 170
+        this.params.height = 240
       }
     },
     toggleBorder () {
@@ -231,6 +236,13 @@ export default {
         }
       }
     },
+    toggleFixed () {
+      if (typeof this.params.fixed === 'number') {
+        this.params.fixed = ''
+      } else {
+        this.params.fixed = 1
+      }
+    },
     togglePagination () {
       this.params.pagination = !this.params.pagination
     },
@@ -263,6 +275,19 @@ export default {
         this.rowHeightIncrement = 1
       }
       this.params.rowHeight += 5 * this.rowHeightIncrement
+    },
+    getData () {
+      if (this.$refs && this.$refs.table) {
+        console.log('[ getData ] ', this.$refs.table.getData())
+      }
+    },
+    getCheckedRowDatas () {
+      if (this.$refs && this.$refs.table) {
+        console.log('[ getCheckedRowDatas ] ', this.$refs.table.getCheckedRowDatas())
+        console.log('[ getCheckedRowIndexs ] ', this.$refs.table.getCheckedRowIndexs())
+        console.log('[ getCheckedRowNum ] ', this.$refs.table.getCheckedRowNum())
+        console.log('[ isAllRowChecked ] ', this.$refs.table.isAllRowChecked())
+      }
     },
     reset () {
       this.params = cloneDeep(defaultTableParams)
@@ -314,7 +339,7 @@ export default {
 .home{
   height: 100%;
   width: 100%;
-  min-width: 1000px;
+  min-width: 500px;
   position: relative;
   header {
     width: 100%;

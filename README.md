@@ -675,8 +675,8 @@ export default {
 | `textOverflow` | text-overflow style of table cell | `string` | `clip/ellipsis` | `clip` |
 | `showCheck` | show checkbox of rows. Only when the `header` is `'row'`, the first cell of the first row is the checkbox of all rows. Otherwise, the first cell is the checkbox of the first row | `boolean` | `true`/`false` | `false` |
 | `enableSearch` | enable/disable searching, filter rows by keyword | `boolean` | `true`/`false` | `false`   |
-| `minWidth` | min width of table | `number` | - | `300` |
-| `maxWidth` | max width of table | `number` | - | `1000` |
+| `minWidth` | min width of table | `number` | - | `100` |
+| `maxWidth` | max width of table | `number` | - | `10000` |
 | `height` | table height. fix header by configure the height of table | `number` | -  | - |
 | `headerHeight` | header height  | `number`  | `>= 24` | `30` |
 | `rowHeight` | row height  | `number`  | `>= 24` | `30` |

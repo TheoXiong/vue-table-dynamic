@@ -668,8 +668,8 @@ export default {
 | `textOverflow` | 表格单元文本的text-overflow样式 | `string` | `clip/ellipsis` | `clip` |
 | `showCheck` | 显示多选框。仅当`header`为`row`时，第一行第一列为全选框，否则第一列均为当前行的勾选框 | `boolean` | `true`/`false` | `false` |
 | `enableSearch` | 使用全局搜索功能 | `boolean` | `true`/`false` | `false`   |
-| `minWidth` | 表最小宽度 | `number` | - | `300` |
-| `maxWidth` | 表最大宽度 | `number` | - | `1000` |
+| `minWidth` | 表最小宽度 | `number` | - | `100` |
+| `maxWidth` | 表最大宽度 | `number` | - | `10000` |
 | `height` | 表可视高度。通过配置表格高度，（当`header`为`row`时）可固定表头。当表格超出配置高度，垂直滚动时首行表头会固定不动 | `number` | -  | - |
 | `headerHeight` | 表头高度  | `number`  | `>= 24` | `30` |
 | `rowHeight` | 行高  | `number`  | `>= 24` | `30` |

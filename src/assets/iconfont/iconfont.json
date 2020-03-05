@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "4767013",
+      "name": "up",
+      "font_class": "up",
+      "unicode": "e7ee",
+      "unicode_decimal": 59374
+    },
+    {
       "icon_id": "4767011",
       "name": "right",
       "font_class": "right",
@@ -27,6 +34,13 @@
       "unicode_decimal": 59371
     },
     {
+      "icon_id": "6598347",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e8ef",
+      "unicode_decimal": 59631
+    },
+    {
       "icon_id": "4767093",
       "name": "check",
       "font_class": "check",
@@ -39,13 +53,6 @@
       "font_class": "minus",
       "unicode": "e7fd",
       "unicode_decimal": 59389
-    },
-    {
-      "icon_id": "6598347",
-      "name": "search",
-      "font_class": "search",
-      "unicode": "e8ef",
-      "unicode_decimal": 59631
     }
   ]
 }

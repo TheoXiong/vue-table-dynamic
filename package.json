@@ -1,6 +1,6 @@
 {
   "name": "vue-table-dynamic",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A vue component of dynamic table",
   "main": "dist/index.min.js",
   "scripts": {
@@ -13,7 +13,8 @@
   "author": "TheoXiong",
   "license": "MIT",
   "dependencies": {
-    "lodash.trim": "^4.5.1"
+    "lodash.trim": "^4.5.1",
+    "vue-scrollbar-simple": "0.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

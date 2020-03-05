@@ -12,86 +12,113 @@
       </div>
       <div 
         class="v-table"
-        :class="{ 'v-show-border':tableBorder }"
+        :class="{ 
+          'v-show-border':tableBorder
+        }"
         :style="{ minWidth: minWidth + 'px', maxWidth: maxWidth + 'px' }"
       >
         <!-- Table Header -->
-        <div 
-          v-if="headerInfirstRow" 
-          class="v-table-row flex-c is-header"
-          :class="{ 'is-striped': rowStripe, 'v-show-border':tableBorder }"
-          :style="{ height: headerHeight + 'px' }"
-          @click="onClickRow(tableData.rows[0], 0)"
-        >
+        <div class="v-table-header-wrap">
           <div 
-            v-if="showCheck" 
-            class="table-check flex-c-c" 
-            :class="{ 'v-show-border':tableBorder }"
-            :style="{ backgroundColor: isHighlighted(0, NaN) ? highlightedColor : 'transparent' }"
-          > 
-            <div 
-              class="table-check-all flex-c-c"
-              :class="{ 'is-checked': tableData.rows[0].checked }"
-              @click.stop="onCheckAll(tableData.rows[0])"
-            >
-              <i class="iconfont iconcheck" v-show="tableData.rows[0].checked === true"></i> 
-              <i class="iconfont iconminus" v-show="tableData.rows[0].checked === 'indeterminate'"></i>
-            </div>
-          </div>
-          <div 
-            v-for="(tableCell, j) in tableData.rows[0].cells" :key="j" 
-            class="table-cell flex-c-s" 
-            :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
-            :style="getCellStyle(0, j)"
-            @click="onClickCell(tableCell, 0, j)"
+            v-if="headerInfirstRow" 
+            class="v-table-row flex-c is-header"
+            :class="{ 'is-striped': rowStripe, 'v-show-border': tableBorder, 'is-hovering': tableData.rows[0].hovering }"
+            :style="{ 
+              height: headerHeight + 'px', 
+              minWidth: getRowMinWidth(),
+              marginLeft: this.headerLeft * -1 +'px'
+            }"
+            @mouseenter="onMouseenter(tableData.rows[0])" 
+            @mouseleave="onMouseleave(tableData.rows[0])"
+            @click="onClickRow(tableData.rows[0], 0)"
           >
-            <span 
-              class="table-cell-content" 
-              :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+            <div 
+              v-if="showCheck" 
+              class="table-check flex-c-c" 
+              :class="{ 'v-show-border':tableBorder }"
+              :style="{ backgroundColor: isHighlighted(0, NaN) ? highlightedColor : 'transparent' }"
+            > 
+              <div
+                class="table-check-all flex-c-c"
+                :class="{ 'is-checked': tableData.rows[0].checked }"
+                @click.stop="onCheckAll(tableData.rows[0])"
+              >
+                <i class="iconfont iconcheck" v-show="tableData.rows[0].checked === true"></i> 
+                <i class="iconfont iconminus" v-show="tableData.rows[0].checked === 'indeterminate'"></i>
+              </div>
+            </div>
+            <div 
+              v-for="(tableCell, j) in tableData.rows[0].cells" :key="j" 
+              class="table-cell flex-c" 
+              :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
+              :style="getCellStyle(0, j)"
+              @click="onClickCell(tableCell, 0, j)"
             >
-              {{ tableCell.data }}
-            </span>
-            <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: '30px' }">
-              <i 
-                class="sort-btns sort-ascending" 
-                :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
-                @click.stop="onSort(j, 'ascending')"
+              <span 
+                v-if="!(fixedColumn.includes(j))"
+                class="table-cell-inner flex-c-s"
               >
-              </i>
-              <i 
-                class="sort-btns sort-descending" 
-                :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'descending' }"
-                @click.stop="onSort(j, 'descending')"
-              >
-              </i>
-            </span>
-            <span 
-              v-if="filterConfig[j]" 
-              class="table-filter flex-c-c" 
-              :style="{ height: headerHeight + 'px' }" 
-            >
-              <filter-panel 
-                :content="filterConfig[j].content" 
-                @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
-                @reset="clearFilter(j)"
-              >
-                <i slot="reference" class="iconfont icondown"></i>
-              </filter-panel>
-            </span>
+                <span 
+                  class="table-cell-content" 
+                  :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+                >
+                  {{ tableCell.data }}
+                </span>
+                <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: '30px' }">
+                  <i 
+                    class="sort-btns sort-ascending" 
+                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
+                    @click.stop="onSort(j, 'ascending')"
+                  >
+                  </i>
+                  <i 
+                    class="sort-btns sort-descending" 
+                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'descending' }"
+                    @click.stop="onSort(j, 'descending')"
+                  >
+                  </i>
+                </span>
+                <span 
+                  v-if="filterConfig[j]" 
+                  class="table-filter flex-c-c" 
+                  :style="{ height: headerHeight + 'px' }" 
+                >
+                  <filter-panel 
+                    :content="filterConfig[j].content" 
+                    @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
+                    @reset="clearFilter(j)"
+                  >
+                    <i slot="reference" class="iconfont icondown"></i>
+                  </filter-panel>
+                </span>
+              </span>
+            </div>
           </div>
         </div>
         <!-- Table Body -->
         <div class="v-table-body" :style="{ height: height }">
-          <vue-scrollbar ref="scrollbar">
-            <div v-for="(tableRow, i) in tableData.rows" :key="i"> 
+          <vue-scrollbar
+            x-bar-display="hidden"
+            :size="7"
+            :border-radius="0"
+            :step="scrollStep"
+            @scroll-x="onScrollX"
+            @scroll-y="onScrollY"
+            @size="onSize"
+            ref="scrollbar" 
+          >
+            <div v-for="(tableRow, i) in tableData.rows" :key="i" :style="{ minWidth: getRowMinWidth() }"> 
               <div
                 v-show="tableRow.show && !tableRow.filtered && !(pagination && !tableRow.inPage) && !(i === 0 && headerInfirstRow)" 
                 class="v-table-row flex-c"
                 :class="{ 
                   'is-striped': (rowStripe && i % 2 === 0), 
-                  'v-show-border':tableBorder
+                  'v-show-border': tableBorder,
+                  'is-hovering': tableRow.hovering
                 }"
-                :style="{ height: rowHeight + 'px' }"
+                :style="{ height: rowHeight + 'px', minWidth: getRowMinWidth() }"
+                @mouseenter="onMouseenter(tableRow)" 
+                @mouseleave="onMouseleave(tableRow)"
                 @click="onClickRow(tableRow, tableRow.index)"
               >
                 <div 
@@ -100,7 +127,7 @@
                   :class="{ 'v-show-border':tableBorder }"
                   :style="{ backgroundColor: isHighlighted(tableRow.index, NaN) ? highlightedColor : 'transparent' }"
                 > 
-                  <div 
+                  <div
                     class="table-check-row flex-c-c"
                     :class="{ 'is-checked': tableRow.checked }"
                     @click.stop="onCheckRow(tableRow, tableRow.index)"
@@ -115,7 +142,8 @@
                   :style="getCellStyle(tableRow.index, j)"
                   @click="onClickCell(tableCell, tableRow.index, j)"
                 >
-                  <span 
+                  <span
+                    v-if="!(fixedColumn.includes(j))"
                     class="table-cell-content"
                     :class="{'fill-width': i !== 0}"
                     :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
@@ -130,6 +158,158 @@
               </div>
             </div>
           </vue-scrollbar>
+        </div>
+        <!-- Table Fixed -->
+        <div class="v-table-fixed" :class="{ 'is-show-shadow': (scrollx !== 'left' )}"
+          v-if="fixedWidth > 0" :style="{ width: fixedWidth + 'px' }"
+        >
+          <!-- Fixed Header -->
+          <div 
+            v-if="headerInfirstRow" 
+            class="v-table-row flex-c is-header"
+            :class="{ 'is-striped': rowStripe, 'v-show-border': tableBorder, 'is-hovering': tableData.rows[0].hovering }"
+            :style="{ 
+              height: headerHeight + 'px',
+              minWidth: getRowMinWidth()
+            }"
+            @mouseenter="onMouseenter(tableData.rows[0])" 
+            @mouseleave="onMouseleave(tableData.rows[0])"
+            @click="onClickRow(tableData.rows[0], 0)"
+          >
+            <div 
+              v-if="showCheck" 
+              class="table-check flex-c-c" 
+              :class="{ 'v-show-border':tableBorder }"
+              :style="{ backgroundColor: isHighlighted(0, NaN) ? highlightedColor : 'transparent' }"
+            > 
+              <div
+                class="table-check-all flex-c-c"
+                :class="{ 'is-checked': tableData.rows[0].checked }"
+                @click.stop="onCheckAll(tableData.rows[0])"
+              >
+                <i class="iconfont iconcheck" v-show="tableData.rows[0].checked === true"></i> 
+                <i class="iconfont iconminus" v-show="tableData.rows[0].checked === 'indeterminate'"></i>
+              </div>
+            </div>
+            <div 
+              v-for="(tableCell, j) in tableData.rows[0].cells" :key="j" 
+              class="table-cell flex-c" 
+              :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
+              :style="getCellStyle(0, j)"
+              @click="onClickCell(tableCell, 0, j)"
+            >
+              <span 
+                v-if="fixedColumn.includes(j)"
+                class="table-cell-inner flex-c-s"
+              >
+                <span 
+                  class="table-cell-content" 
+                  :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+                >
+                  {{ tableCell.data }}
+                </span>
+                <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: '30px' }">
+                  <i 
+                    class="sort-btns sort-ascending" 
+                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
+                    @click.stop="onSort(j, 'ascending')"
+                  >
+                  </i>
+                  <i 
+                    class="sort-btns sort-descending" 
+                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'descending' }"
+                    @click.stop="onSort(j, 'descending')"
+                  >
+                  </i>
+                </span>
+                <span 
+                  v-if="filterConfig[j]" 
+                  class="table-filter flex-c-c" 
+                  :style="{ height: headerHeight + 'px' }" 
+                >
+                  <filter-panel 
+                    :content="filterConfig[j].content" 
+                    @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
+                    @reset="clearFilter(j)"
+                  >
+                    <i slot="reference" class="iconfont icondown"></i>
+                  </filter-panel>
+                </span>
+              </span>
+            </div>
+          </div>
+          <!-- Fixed Body -->
+          <div class="v-table-body v-table-body-fixed" :style="{ height: height }" ref="fixedBody">
+            <div class="v-table-body-inner" :style="{ marginTop: fixedTop * -1 + 'px' }" @wheel="onFixedScroll" ref="fixedBodyInner">
+              <div v-for="(tableRow, i) in tableData.rows" :key="i" :style="{ minWidth: getRowMinWidth() }"> 
+                <div
+                  v-show="tableRow.show && !tableRow.filtered && !(pagination && !tableRow.inPage) && !(i === 0 && headerInfirstRow)" 
+                  class="v-table-row flex-c"
+                  :class="{ 
+                    'is-striped': (rowStripe && i % 2 === 0), 
+                    'v-show-border': tableBorder,
+                    'is-hovering': tableRow.hovering
+                  }"
+                  :style="{ height: rowHeight + 'px' }"
+                  @mouseenter="onMouseenter(tableRow, true)" 
+                  @mouseleave="onMouseleave(tableRow, true)"
+                  @click="onClickRow(tableRow, tableRow.index)"
+                >
+                  <div 
+                    v-if="showCheck" 
+                    class="table-check flex-c-c" 
+                    :class="{ 'v-show-border':tableBorder }"
+                    :style="{ backgroundColor: isHighlighted(tableRow.index, NaN) ? highlightedColor : 'transparent' }"
+                  > 
+                    <div
+                      class="table-check-row flex-c-c"
+                      :class="{ 'is-checked': tableRow.checked }"
+                      @click.stop="onCheckRow(tableRow, tableRow.index)"
+                    >
+                      <i class="iconfont iconcheck" v-show="tableRow.checked"></i>
+                    </div>
+                  </div>
+                  <div 
+                    v-for="(tableCell, j) in tableRow.cells" :key="j" 
+                    class="table-cell flex-c-s" 
+                    :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
+                    :style="getCellStyle(tableRow.index, j)"
+                    @click="onClickCell(tableCell, tableRow.index, j)"
+                  >
+                    <span
+                      v-if="fixedColumn.includes(j)"
+                      class="table-cell-content"
+                      :class="{'fill-width': i !== 0}"
+                      :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+                      :contenteditable="isEditable(tableRow.index, j)"
+                      :id="tableCell.key"
+                      @blur="onCellBlur(tableCell, tableRow.index, j)"
+                      @keydown.enter.stop.prevent="onCellKeyEnter"
+                    >
+                      {{ tableCell.data }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Table left/right border -->
+        <div class="v-table-left-line" v-if="tableBorder"></div>
+        <div class="v-table-right-line" v-if="tableBorder"></div>
+        <div class="v-table-scrollbar">
+          <horizontal-scrollbar
+            v-if="bodyWidth && bodyViewerWidth"
+            x-bar-display="show"
+            :size="7"
+            :border-radius="0"
+            :viewer-width="bodyViewerWidth"
+            :wrapper-width="bodyWidth"
+            :scrolling="hMovement"
+            @change-position="onChangePosition"
+            ref="hscroll"
+          >
+          </horizontal-scrollbar>
         </div>
       </div>
       <!-- Table Pagination -->
@@ -152,7 +332,9 @@
 <script>
 import { unemptyArray, is2DMatrix } from '../utils/array.js'
 import { unique } from '../utils/unique.js'
-import VueScrollbar from './scrollbar/VueScrollbar'
+import { isPercentage } from '../utils/util.js'
+import VueScrollbar from 'vue-scrollbar-simple'
+import HorizontalScrollbar from './scrollbar/HorizontalScrollbar.vue'
 import VueInput from './VueInput.vue'
 import FilterPanel from './FilterPanel.vue'
 import VuePagination from './VuePagination.vue'
@@ -172,7 +354,17 @@ export default {
       searchValue: '',
       activatedSort: {},
       totalPages: 0,
-      pageSize: 0
+      pageSize: 0,
+      headerLeft: 0,
+      scrollStep: 40,
+      scrollx: 'left',
+      scrolly: 'top',
+      fixedColumn: [],
+      fixedWidth: 0,
+      fixedTop: 0,
+      bodyWidth: null,
+      bodyViewerWidth: null,
+      hMovement: 0
     }
   },
   props: {
@@ -188,10 +380,10 @@ export default {
     // params.textOverflow: (String) 表格单元中文本溢出处理 'clip/ellipsis'  默认clip
     // params.showCheck: (Boolean) 是否在第一列前显示多选（勾选）框。 默认不显示。  注：仅当params.header为'row时，第一行第一列为'全选'框，否则第一列均为当前行的勾选框
     // params.enableSearch: (Boolean) 启用搜索功能。默认禁用
-    // params.minWidth: (Number) table最小宽度。默认300
-    // params.maxWidth: (Number) table最大宽度。默认1000
+    // params.minWidth: (Number) table最小宽度。默认100
+    // params.maxWidth: (Number) table最大宽度。默认10000
     // params.height: (Number) table高度。
-    // params.headerHeight: (Number) table row高度。默认30
+    // params.headerHeight: (Number) table header高度。默认30
     // params.rowHeight: (Number) table row高度。默认30
     // params.columnWidth: (Array) 指定某一列或某几列的宽度，剩余列宽度均分. [{column: 0, width: 80}, {column: 1, width: '20%'}]
     // params.sort: (Array) 指定以某列为基准排序。如指定第1列和第二列可排序：[0, 1]。 只在配置了第一行作为表头时有效
@@ -265,13 +457,13 @@ export default {
       if (this.params && typeof this.params.minWidth === 'number' && this.params.minWidth > 0) {
         return this.params.minWidth
       }
-      return 300
+      return 100
     },
     maxWidth () {
       if (this.params && typeof this.params.maxWidth === 'number' && this.params.maxWidth > 0) {
         return this.params.maxWidth
       }
-      return 1000
+      return 10000
     },
     headerHeight () {
       if (this.params && typeof this.params.headerHeight === 'number' && this.params.headerHeight >= 24) {
@@ -287,25 +479,46 @@ export default {
     },
     height () {
       if (this.params && typeof this.params.height === 'number' && this.params.height > this.rowHeight) {
-        return (this.params.height - this.rowHeight) + 'px'
+        if (this.headerInfirstRow) {
+          return (this.params.height - this.headerHeight) + 'px'
+        }
+        return this.params.height + 'px'
       }
       return 'auto'
     },
     columnWidth () {
       if (this.params && unemptyArray(this.params.columnWidth)) {
         let obj = {}
+        let percentageList = []
+
         this.params.columnWidth.forEach(c => {
           if (c && typeof c.column === 'number' && c.column >= 0) {
             if (typeof c.width === 'number' && c.width >= 0) {
-              obj[c.column] = c.width + 'px'
-            } else if (typeof c.width === 'string' && /^(\d+\.?\d+?)%$/.test(c.width)) {
-              obj[c.column] = c.width
+              obj[c.column] = { value: c.width + 'px', type: 'absolute' }
+            } else if (isPercentage(c.width)) {
+              obj[c.column] = { value: c.width, type: 'percentage' }
+              percentageList.push(c.width)
             }
           }
         })
+
+        if (percentageList.length > 0) {
+          let total = percentageList.reduce((t, p) => { return parseFloat(t) + parseFloat(p) })
+          if (total > 100) {
+            console.error(`The total percentage of column width must be less than 100%, current is ${total}%`)
+            return {}
+          }
+        }
+
         return obj
       }
       return {}
+    },
+    fixedConfig () {
+      if (this.params && typeof this.params.fixed === 'number' && this.params.fixed >= 0) {
+        return this.params.fixed
+      }
+      return null
     },
     sortConfig () {
       if (this.params && this.params.header === 'row' && Array.isArray(this.params.sort)) {
@@ -388,6 +601,18 @@ export default {
         }
       },
       immediate: true
+    },
+    showCheck (value) {
+      this.$nextTick(this.updateFixedColumn)
+    },
+    fixedConfig: {
+      handler () {
+        this.$nextTick(this.updateFixedColumn)
+      },
+      immediate: true
+    },
+    columnWidth (value) {
+      this.$nextTick(this.updateFixedColumn)
     }
   },
   beforeDestroy () {
@@ -402,7 +627,7 @@ export default {
       if (this.params && is2DMatrix(this.sourceData)) {
         let table = { key: unique(`table-`), checked: false, rows: [], filteredRows: {} }
         for (let i = 0; i < this.sourceData.length; i++) {
-          let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, inPage: false, index: i }
+          let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, inPage: false, hovering: false, index: i }
           tableRow.cells = this.sourceData[i].map(item => {
             return { data: item, key: unique(`table-`), checked: false }
           })
@@ -478,7 +703,7 @@ export default {
           ...style,
           flexGrow: 0,
           flexShrink: 0,
-          flexBasis: this.columnWidth[columnIndex]
+          flexBasis: this.columnWidth[columnIndex].value
         }
       } else {
         return {
@@ -488,6 +713,82 @@ export default {
           flexBasis: '0%'
         }
       }
+    },
+    /**
+     * @function 根据输入列宽配置计算行最小宽度
+     *           1. 没有配置列宽：继承父容器宽度
+     *           2. 仅配置了部分（或全部）列宽为绝对像素值：配置的像素值之和 + 剩余列 * 列最小宽度 + 多选列宽度(如果启用了多选)
+     *           3. 全部列均配置为相对百分比：继承父容器宽度
+     *           4. 部分列配置为相对百分比，部分列配置为绝对像素值：(配置的像素值之和(如果有) + 剩余列(如果有) * 列最小宽度 + 多选列宽度(如果启用了多选)) * 100 / (100 - 配置的百分比之和)
+     */
+    getRowMinWidth () {
+      let columnMinWidth = 80
+      let checkColumnWidth = this.showCheck ? 50 : 0
+      let columnNum = this.getColumnNum()
+      let defaultMinWidth = '100%'
+      let offset = 2
+      let keys = Object.keys(this.columnWidth)
+
+      if (!(keys.length > 0)) {
+        return defaultMinWidth
+      } else {
+        let abs = { total: 0, count: 0 } // 绝对像素值
+        let pct = { total: 0, count: 0 } // 相对百分比
+
+        for (let i = 0; i < keys.length; i++) {
+          if (keys[i] >= columnNum) continue
+
+          let conf = this.columnWidth[keys[i]]
+          if (conf.type === 'absolute') {
+            abs.total += parseFloat(conf.value)
+            abs.count += 1
+          } else if (conf.type === 'percentage') {
+            pct.total += parseFloat(conf.value)
+            pct.count += 1
+          }
+        }
+
+        if (pct.count === 0) {
+          let remainNum = columnNum - abs.count
+          if (remainNum < 0) return defaultMinWidth
+          return Math.ceil(abs.total + remainNum * columnMinWidth + checkColumnWidth) + offset + 'px'
+        } else if (pct.count === columnNum) {
+          return defaultMinWidth
+        } else {
+          let remainNum = columnNum - abs.count - pct.count
+          if (remainNum < 0 || pct.total >= 100) return defaultMinWidth
+
+          let ret = (remainNum * columnMinWidth + checkColumnWidth + abs.total) * 100 / (100 - pct.total)
+          return Math.ceil(ret) + offset + 'px'
+        }
+      }
+    },
+    updateFixedColumn () {
+      if (!(typeof this.fixedConfig === 'number' && this.fixedConfig >= 0)) {
+        this.fixedColumn = []
+        this.fixedWidth = 0
+        return
+      }
+
+      let fixedWidth = 0
+      let fixedColumn = []
+      for (let i = 0; i <= this.fixedConfig; i++) {
+        let columnIndex = i
+        let item = this.columnWidth[columnIndex]
+        if (item && item.type === 'absolute') {
+          fixedWidth += parseFloat(item.value)
+          fixedColumn.push(columnIndex)
+        } else {
+          this.fixedColumn = []
+          this.fixedWidth = 0
+          throw new Error(`Failed to render fixed column, the width of fixed column(${i}) needs to be configured with an absolute pixel value by params.columnWidth `)
+        }
+      }
+
+      let checkColumnWidth = this.showCheck ? 50 : 0
+      fixedWidth += checkColumnWidth
+      this.fixedWidth = fixedWidth
+      this.fixedColumn.splice(0, this.fixedColumn.length, ...fixedColumn)
     },
     /**
    * @function 检查Cell是否可编辑
@@ -591,6 +892,28 @@ export default {
    */
     onClickRow (tableRow, rowIndex) {
       this.$emit('row-click', rowIndex, this.getRowDataFromTableRow(tableRow))
+    },
+    /**
+   * @function 鼠标进入Row事件
+   * @param {Object} tableRow Row数据对象
+   * @param {Boolean} isFixedBody 是否为固定列中的row
+   */
+    onMouseenter (tableRow, isFixedBody = false) {
+      tableRow.hovering = true
+      if (isFixedBody && this.$refs.scrollbar && this.$refs.scrollbar.onMouseenter) {
+        this.$refs.scrollbar.onMouseenter()
+      }
+    },
+    /**
+   * @function 鼠标离开Row事件
+   * @param {Object} tableRow Row数据对象
+   * @param {Boolean} isFixedBody 是否为固定列中的row
+   */
+    onMouseleave (tableRow, isFixedBody = false) {
+      tableRow.hovering = false
+      if (isFixedBody && this.$refs.scrollbar && this.$refs.scrollbar.onMouseleave) {
+        this.$refs.scrollbar.onMouseleave()
+      }
     },
     /**
    * @function 单击Cell事件
@@ -913,9 +1236,74 @@ export default {
       }
 
       return 0
+    },
+    /**
+   * @function 列的数量
+   */
+    getColumnNum () {
+      if (this.tableData && unemptyArray(this.tableData.rows)) {
+        let row = this.tableData.rows[0]
+        return row.cells.length
+      }
+      return 0
+    },
+    /**
+     * @function 水平方向滚动事件
+     */
+    onScrollX (pos) {
+      if (pos.right) {
+        this.scrollx = 'right'
+      } else if (pos.left) {
+        this.scrollx = 'left'
+      } else {
+        this.scrollx = 'middle'
+      }
+      this.hMovement = pos.value / this.bodyViewerWidth * 100
+      this.$nextTick(() => { this.headerLeft = pos.value })
+    },
+    /**
+     * @function 垂直方向滚动事件
+     */
+    onScrollY (pos) {
+      if (pos.top) {
+        this.scrolly = 'top'
+      } else if (pos.bottom) {
+        this.scrolly = 'bottom'
+      } else {
+        this.scrolly = 'middle'
+      }
+      this.$nextTick(() => { this.fixedTop = pos.value })
+    },
+    onSize (size) {
+      this.bodyViewerWidth = size.viewerWidth
+      this.bodyWidth = size.wrapperWidth
+    },
+    /**
+     * @function 固定列的鼠标滚动事件
+     */
+    onFixedScroll (e) {
+      if (!(this.fixedWidth > 0)) return
+      if (!(this.$refs.fixedBody && this.$refs.fixedBodyInner)) return
+      if (!this.$refs.scrollbar) return
+
+      let viewerHeight = this.$refs.fixedBodyInner.clientHeight
+      let wrapperHeight = this.$refs.fixedBody.clientHeight
+
+      setTimeout(() => {
+        let scrollY = e.deltaY > 0 ? this.scrollStep : -(this.scrollStep)
+        let nextY = this.fixedTop + scrollY
+
+        if (viewerHeight > wrapperHeight) {
+          this.$refs.scrollbar.scrollToY(nextY)
+        }
+      }, 10)
+    },
+    onChangePosition (movement) {
+      let next = movement / 100
+      this.$refs.scrollbar.scrollToX(next * this.bodyViewerWidth)
     }
   },
-  components: { VueInput, FilterPanel, VuePagination, VueScrollbar }
+  components: { VueInput, FilterPanel, VuePagination, VueScrollbar, HorizontalScrollbar }
 }
 </script>
 
@@ -929,22 +1317,85 @@ $borderColor: #DCDFE6;
   font-family: Helvetica, Arial, 'Microsoft YaHei';
   font-size: 13px;
   color: #606266;
+  padding-bottom: 10px;
+  overflow: hidden;
 }
 .v-table{
+  position: relative;
   box-sizing: border-box;
   border: none;
-  // border-bottom: 1px solid $borderColor;
 }
-
+.v-table::before{
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  z-index: 1;
+  border-bottom: 1px solid $borderColor;
+}
 .v-table.v-show-border{
   border-top: 1px solid $borderColor;
+}
+.v-table-left-line, .v-table-right-line{
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+}
+.v-table-left-line{
+  left: 0;
+  border-left: 1px solid $borderColor;
+}
+.v-table-right-line{
+  right: 0;
+  border-right: 1px solid $borderColor;
+}
+
+.v-table-scrollbar{
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: -8px;
+  height: 8px;
+  background: transparent;
+}
+
+.v-table-header-wrap{
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.v-table-fixed{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  z-index: 2;
+  overflow: hidden;
+  border-bottom: 1px solid $borderColor;
+}
+.v-table-fixed.is-show-shadow{
+  -webkit-box-shadow: 1px 0px 6px rgba(0,0,0,.12);
+  box-shadow: 1px 0px 6px rgba(0,0,0,.12);
+}
+.v-table-body-fixed{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .v-table-row{
   box-sizing: border-box;
   border: none;
   border-bottom: 1px solid $borderColor;
-  background-color: transparent;
+  background-color: #FFFFFF;
 }
 .v-table-row.is-header{
   overflow: hidden;
@@ -956,12 +1407,8 @@ $borderColor: #DCDFE6;
 .v-table-row.is-striped{
   background-color: #F9F9F9;
 }
-.v-table-row.v-show-border{
-  border-right: 1px solid $borderColor;
-}
-
-.v-table-row:hover{
-  background-color: #F5F7FA;
+.v-table-row.is-hovering{
+  background-color: #F3F5F7;
 }
 
 .table-check{
@@ -1018,6 +1465,13 @@ $borderColor: #DCDFE6;
 .table-check.v-show-border,
 .table-cell.v-show-border{
   border-left: 1px solid $borderColor;
+}
+
+.table-cell-inner{
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  border: none;
 }
 
 .table-cell-content{
@@ -1087,7 +1541,8 @@ $borderColor: #DCDFE6;
 }
 
 .table-pagination{
-  padding: 8px 0px;
+  padding: 0px;
+  padding-top: 10px;
 }
 
 </style>

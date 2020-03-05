@@ -8,7 +8,7 @@
     >
       <span class="size-text">{{ size }}/page</span>
       <span class="size-icon">
-        <i class="iconfont icondown"></i>
+        <i class="iconfont iconup"></i>
       </span>
       <transition name="zoom-in-top">
         <div class="size-options" v-show="showPageSizeOptions">
@@ -257,12 +257,13 @@ $borderColor: #DCDFE6;
     padding: 4px 0px;
     outline: 0;
     z-index: 9999;
-    top: 100%;
+    bottom: calc(100% + 2px);
     left: -1px;
     right: -1px;
     border: 1px solid #E5EEF5;
     box-shadow: 0px 2px 12px 0 rgba(0,0,0,0.1);
     overflow: hidden;
+    background-color: #FFFFFF;
     cursor: auto;
     .size-item{
       outline: 0;
@@ -343,11 +344,11 @@ $borderColor: #DCDFE6;
   -webkit-transition: transform 250ms ease-in-out, opacity 250ms ease-in-out;
   -moz-transition: transform 250ms ease-in-out, opacity 250ms ease-in-out;
   -o-transition: transform 250ms ease-in-out, opacity 250ms ease-in-out;
-  transform-origin: center top;
-  -webkit-transform-origin: center top;
-  -moz-transform-origin: center top;
-  -o-transform-origin: center top;
-  -ms-transform-origin: center top;
+  transform-origin: center  bottom;
+  -webkit-transform-origin: center  bottom;
+  -moz-transform-origin: center  bottom;
+  -o-transform-origin: center  bottom;
+  -ms-transform-origin: center  bottom;
 }
 .zoom-in-top-enter,
 .zoom-in-top-leave-active {
