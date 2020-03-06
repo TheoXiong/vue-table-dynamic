@@ -99,6 +99,7 @@
         <div class="v-table-body" :style="{ height: height }">
           <vue-scrollbar
             x-bar-display="hidden"
+            y-bar-display="show"
             :size="7"
             :border-radius="0"
             :step="scrollStep"
@@ -1258,8 +1259,12 @@ export default {
       } else {
         this.scrollx = 'middle'
       }
-      this.hMovement = pos.value / this.bodyViewerWidth * 100
-      this.$nextTick(() => { this.headerLeft = pos.value })
+      this.headerLeft = pos.value
+      if (this.bodyViewerWidth > 0) {
+        this.hMovement = pos.value / this.bodyViewerWidth * 100
+      } else {
+        this.hMovement = 0
+      }
     },
     /**
      * @function 垂直方向滚动事件
@@ -1272,7 +1277,7 @@ export default {
       } else {
         this.scrolly = 'middle'
       }
-      this.$nextTick(() => { this.fixedTop = pos.value })
+      this.fixedTop = pos.value
     },
     onSize (size) {
       this.bodyViewerWidth = size.viewerWidth

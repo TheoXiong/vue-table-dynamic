@@ -13,8 +13,9 @@
   "author": "TheoXiong",
   "license": "MIT",
   "dependencies": {
+    "lodash.throttle": "^4.1.1",
     "lodash.trim": "^4.5.1",
-    "vue-scrollbar-simple": "0.0.2"
+    "vue-scrollbar-simple": "0.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -29,6 +29,7 @@
 </template>
 
 <script>
+const throttle = require('lodash.throttle')
 const DISPLAY_LIST = ['hover', 'show', 'hidden']
 
 export default {
@@ -69,10 +70,26 @@ export default {
 
     this.opacity = 0
     if (this.display === 'show') this.opacity = 1
+
+    this.handleDrag = throttle((e) => {
+      if (this.dragging) {
+        this.$emit('dragging')
+        e.preventDefault()
+        e.stopPropagation()
+
+        let xMovement = e.clientX - this.start
+        let xMovementPercentage = xMovement / this.wrapperWidth * 100;
+        this.start = e.clientX
+
+        let next = this.scrolling + xMovementPercentage
+        this.$emit('change-position', next, 'horizontal')
+      }
+    }, 100)
   },
   beforeDestroy () {
     document.removeEventListener("mousemove", this.onDrag)
     document.removeEventListener("mouseup", this.stopDrag)
+    this.handleDrag = null
   },
   computed: {
     scrollbarSize () {
@@ -114,17 +131,8 @@ export default {
     // 鼠标移动 => 拖动进行中
     // 根据鼠标在s水平方向移动距离计算新的滚动位置next（百分比），父组件根据next调整视图的marginLeft，并更新scrolling值，反馈到滚动条的位移上
     onDrag(e) {
-      if (this.dragging) {
-        this.$emit('dragging')
-        e.preventDefault()
-        e.stopPropagation()
-
-        let xMovement = e.clientX - this.start
-        let xMovementPercentage = xMovement / this.wrapperWidth * 100;
-        this.start = e.clientX
-
-        let next = this.scrolling + xMovementPercentage
-        this.$emit('change-position', next, 'horizontal')
+      if (this.handleDrag) {
+        this.handleDrag(e)
       }
     },
     // 鼠标松开 => 停止拖动
