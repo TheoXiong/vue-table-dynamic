@@ -1174,7 +1174,8 @@ export default {
       if (!(tableRow && unemptyArray(tableRow.cells))) return rowData
 
       for (let i = 0; i < tableRow.cells.length; i++) {
-        let cellData = tableRow.cells[i].data || ''
+        let cellData = tableRow.cells[i].data
+        if (typeof cellData === 'undefined') cellData = ''
         rowData.push(cellData)
       }
       return rowData
