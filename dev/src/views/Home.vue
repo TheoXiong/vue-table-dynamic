@@ -82,8 +82,8 @@ const defaultTableParams = {
   stripe: true,
   showCheck: true,
   enableSearch: true,
-  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }, {column: 3, width: 400 }],
-  fixed: '',
+  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }, {column: 3, width: 800 }],
+  fixed: 1,
   sort: [0, 1],
   edit: {},
   highlight: {},
@@ -98,10 +98,10 @@ const defaultTableParams = {
   }],
   pagination: true,
   // pageSize: 20,
-  // pageSizes: [5, 15, 30, 50, 100]
+  // pageSizes: [5, 15, 30, 50, 100],
 }
 
-for (let i = 0; i < 15; i++) {
+for (let i = 0; i < 50; i++) {
   defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
 }
 

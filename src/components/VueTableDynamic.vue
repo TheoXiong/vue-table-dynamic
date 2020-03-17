@@ -16,6 +16,8 @@
           'v-show-border':tableBorder
         }"
         :style="{ minWidth: minWidth + 'px', maxWidth: maxWidth + 'px' }"
+        @mouseenter="onMouseenterTable" 
+        @mouseleave="onMouseleaveTable"
       >
         <!-- Table Header -->
         <div class="v-table-header-wrap">
@@ -88,7 +90,9 @@
                     @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
                     @reset="clearFilter(j)"
                   >
-                    <i slot="reference" class="iconfont icondown"></i>
+                    <i slot="reference" class="iconfont icondown"
+                      :class="{ 'activated': !!activatedFilter[j] }">
+                    </i>
                   </filter-panel>
                 </span>
               </span>
@@ -99,7 +103,7 @@
         <div class="v-table-body" :style="{ height: height }">
           <vue-scrollbar
             x-bar-display="hidden"
-            y-bar-display="show"
+            :y-bar-display="scrollbarDisplay"
             :size="7"
             :border-radius="0"
             :step="scrollStep"
@@ -233,7 +237,9 @@
                     @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
                     @reset="clearFilter(j)"
                   >
-                    <i slot="reference" class="iconfont icondown"></i>
+                    <i slot="reference" class="iconfont icondown" 
+                      :class="{ 'activated': !!activatedFilter[j] }">
+                    </i>
                   </filter-panel>
                 </span>
               </span>
@@ -301,7 +307,7 @@
         <div class="v-table-scrollbar">
           <horizontal-scrollbar
             v-if="bodyWidth && bodyViewerWidth"
-            x-bar-display="show"
+            :x-bar-display="scrollbarDisplay"
             :size="7"
             :border-radius="0"
             :viewer-width="bodyViewerWidth"
@@ -346,6 +352,7 @@ const trim = require('lodash.trim')
 const wordWrapList = ['normal', 'break-word']
 const whiteSpaceList = ['nowrap', 'normal', 'pre', 'pre-wrap', 'pre-line']
 const textOverflowList = ['clip', 'ellipsis']
+const scrollbarDisplayList = ['hover', 'show', 'hidden']
 
 export default {
   name: 'VueTableDynamic',
@@ -354,6 +361,7 @@ export default {
       tableData: {},
       searchValue: '',
       activatedSort: {},
+      activatedFilter: {},
       totalPages: 0,
       pageSize: 0,
       headerLeft: 0,
@@ -562,6 +570,12 @@ export default {
         return this.params.pageSizes
       }
       return [10, 20, 50, 100]
+    },
+    scrollbarDisplay () {
+      if (this.params && scrollbarDisplayList.includes(this.params.scrollbar)) {
+        return this.params.scrollbar
+      }
+      return 'show'
     }
   },
   watch: {
@@ -569,6 +583,7 @@ export default {
       handler (value) {
         this.searchValue = ''
         this.activatedSort = {}
+        this.activatedFilter = {}
       },
       deep: true,
       immediate: true
@@ -619,6 +634,7 @@ export default {
   beforeDestroy () {
     this.tableData = {}
     this.activatedSort = {}
+    this.activatedFilter = {}
   },
   methods: {
     /**
@@ -916,6 +932,16 @@ export default {
         this.$refs.scrollbar.onMouseleave()
       }
     },
+    onMouseenterTable () {
+      if (this.$refs.hscroll) {
+        this.$refs.hscroll.showBar()
+      }
+    },
+    onMouseleaveTable () {
+      if (this.$refs.hscroll) {
+        this.$refs.hscroll.hiddenBar()
+      }
+    },
     /**
    * @function 单击Cell事件
    * @param {Object} tableCell Cell数据对象
@@ -979,6 +1005,8 @@ export default {
     onFilter (columnIndex, checked, config) {
       if (!(this.tableData && this.tableData.rows)) return
 
+      this.activatedFilter[columnIndex] = true
+
       let filteredArr = []
       this.tableData.rows.forEach((row) => {
         if (row && row.cells && row.cells[columnIndex]) {
@@ -1010,12 +1038,16 @@ export default {
    */
     clearFilter (columnIndex) {
       if (typeof columnIndex === 'number') {
+        this.activatedFilter[columnIndex] = false
         delete this.tableData.filteredRows[columnIndex]
+
         if (this.filterConfig && this.filterConfig[columnIndex]) {
           this.filterConfig[columnIndex].content.forEach(c => { c.checked = false })
         }
       } else {
+        this.activatedFilter = {}
         this.tableData.filteredRows = {}
+
         Object.keys(this.filterConfig).forEach(key => {
           this.filterConfig[key].content.forEach(c => { c.checked = false })
         })
@@ -1543,6 +1575,9 @@ $borderColor: #DCDFE6;
   color: #909399;
   i.iconfont{
     font-size: 12px;
+  }
+  i.iconfont.activated{
+    color: #409EFF;
   }
 }
 

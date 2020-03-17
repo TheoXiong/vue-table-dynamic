@@ -7,9 +7,9 @@
       ref="pSize"
     >
       <span class="size-text">{{ size }}/page</span>
-      <span class="size-icon">
+      <!-- <span class="size-icon">
         <i class="iconfont iconup"></i>
-      </span>
+      </span> -->
       <transition name="zoom-in-top">
         <div class="size-options" v-show="showPageSizeOptions">
           <div 
