@@ -17,6 +17,7 @@
 - [配置列宽](#配置列宽)
 - [配置表头](#配置表头)
 - [固定表头](#固定表头)
+- [固定列](#固定列)
 
 ## Demo
 [https://theoxiong.github.io/vue-table-dynamic/](https://theoxiong.github.io/vue-table-dynamic/) 
@@ -648,6 +649,105 @@ export default {
 </script>
 ```
 
+### 固定列
+
+通过`fixed`配置需要固定的列。当表格内容宽度超出容器宽度时，出现水平滚动条。水平滚动时，固定的列不会移动
+
+- `fixed: number` 需要固定的列。
+- 索引小于等于`fixed`的列都会配置为固定。如`fixed`为1时，第0列和第1列被配置为固定  
+- 对于配置为固定的列，需要通过`columnWidth`指定列的宽度（像素值）
+- 多选框不在固定列索引范围内。即：有多选框时，第0列为内容列，多选框始终在第0列前面
+- 如果需要将中间某列内容固定，可以将params.data中该列数据调整到第0列
+
+![fixed](./docs/images/fixed.png)
+
+```
+<template>
+  <div style="width: 600px">
+    <vue-table-dynamic :params="params" ref="table"></vue-table-dynamic>
+  </div>
+</template>
+
+<script>
+import VueTableDynamic from 'vue-table-dynamic'
+
+const random = () => {
+  return parseInt(Date.now() + Math.random() * 10000000).toString(16).slice(-6)
+}
+
+export default {
+  name: 'Demo',
+  data() {
+    return {
+      params: {
+        data: [
+          ['Index', `Data1`, `Data2`, `Data3`]
+        ],
+        header: 'row',
+        border: true,
+        stripe: true,
+        columnWidth: [{column: 0, width: 100}, {column: 2, width: 400}],
+        fixed: 0
+      }
+    }
+  },
+  mounted () {
+    for (let i = 0; i < 5; i++) {
+      this.params.data.push([i+1, `${random()}`, `${random()}`, `${random()}`])
+    }
+  },
+  components: { VueTableDynamic }
+}
+</script>
+```
+
+### 固定表头和列
+
+通过`height`固定表头, 通过`fixed`配置需要固定的列
+
+![heightAndFixed](./docs/images/heightAndFixed.png)
+
+```
+<template>
+  <div style="width: 600px">
+    <vue-table-dynamic :params="params" ref="table"></vue-table-dynamic>
+  </div>
+</template>
+
+<script>
+import VueTableDynamic from 'vue-table-dynamic'
+
+const random = () => {
+  return parseInt(Date.now() + Math.random() * 10000000).toString(16).slice(-6)
+}
+
+export default {
+  name: 'Demo',
+  data() {
+    return {
+      params: {
+        data: [
+          ['Index', `Data1`, `Data2`, `Data3`]
+        ],
+        header: 'row',
+        border: true,
+        stripe: true,
+        columnWidth: [{column: 0, width: 100}, {column: 2, width: 400}],
+        height: 180,
+        fixed: 0
+      }
+    }
+  },
+  mounted () {
+    for (let i = 0; i < 10; i++) {
+      this.params.data.push([i+1, `${random()}`, `${random()}`, `${random()}`])
+    }
+  },
+  components: { VueTableDynamic }
+}
+</script>
+```
+
 ## API
 
 ### 属性
@@ -671,6 +771,7 @@ export default {
 | `minWidth` | 表最小宽度 | `number` | - | `100` |
 | `maxWidth` | 表最大宽度 | `number` | - | `10000` |
 | `height` | 表可视高度。通过配置表格高度，（当`header`为`row`时）可固定表头。当表格超出配置高度，垂直滚动时首行表头会固定不动 | `number` | -  | - |
+| `fixed` | 固定列，需要与columnWidth配合  | `number`  | `>= 0` |  |
 | `headerHeight` | 表头高度  | `number`  | `>= 24` | `30` |
 | `rowHeight` | 行高  | `number`  | `>= 24` | `30` |
 | `columnWidth` | 指定某一列或某几列的宽度，剩余列宽度均分。`width`值可为绝对值或相对百分比 | Array<{column: number; width: number/string;}> | - | - |
@@ -680,6 +781,7 @@ export default {
 | `pagination` | 使用分页   | `boolean`  | `true`/`false` | `false`   |
 | `pageSize`  | 每页行数 | `number`   | -   | `10` |
 | `pageSizes` | 每页行数的可选项 | `Array<number>`  | - | |
+| `scrollbar` | 滚动条的显示时机 | `string`  | `show/hover/hidden` | `show` |
 
 ### 方法
 

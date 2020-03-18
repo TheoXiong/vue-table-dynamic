@@ -17,6 +17,7 @@ English | [简体中文](./README.zh-CN.md)
 - Column Width
 - Configure Header
 - Fixed Header
+- Fixed Columns
 
 ## Demo
 [https://theoxiong.github.io/vue-table-dynamic/](https://theoxiong.github.io/vue-table-dynamic/) 
@@ -604,7 +605,7 @@ export default {
 
 ### Fixed Header
 
-Fix header by configure the height of table
+Fixed header by configure the height of table
 
 - `height:`*`number`* table height
 - when the value of `header` is not *`'row'`*, the first row is a normal row, will not fixed      
@@ -654,6 +655,105 @@ export default {
 </script>
 ```
 
+### Fixed Columns
+
+Fixed columns by configure `fixed`
+
+- `fixed:`*`number`* the fixed columns
+- columns with index less than or equal to `fixed` will be configured as fixed. such as `fixed: 1`, the first column and the second column will be fixed
+- for fixed columns, need to specify the column width (pixel value) by `columnwidth`
+- multi check box is not in the range of fixed column, it's always in front of the first column
+- if need to fix a column in the middle, adjust the column data in params.data to column 0
+
+![fixed](./docs/images/fixed.png)
+
+```
+<template>
+  <div style="width: 600px">
+    <vue-table-dynamic :params="params" ref="table"></vue-table-dynamic>
+  </div>
+</template>
+
+<script>
+import VueTableDynamic from 'vue-table-dynamic'
+
+const random = () => {
+  return parseInt(Date.now() + Math.random() * 10000000).toString(16).slice(-6)
+}
+
+export default {
+  name: 'Demo',
+  data() {
+    return {
+      params: {
+        data: [
+          ['Index', `Data1`, `Data2`, `Data3`]
+        ],
+        header: 'row',
+        border: true,
+        stripe: true,
+        columnWidth: [{column: 0, width: 100}, {column: 2, width: 400}],
+        fixed: 0
+      }
+    }
+  },
+  mounted () {
+    for (let i = 0; i < 5; i++) {
+      this.params.data.push([i+1, `${random()}`, `${random()}`, `${random()}`])
+    }
+  },
+  components: { VueTableDynamic }
+}
+</script>
+```
+
+### Fixed Header and Columns
+
+Fixed header by `height`. Fixed columns by `fixed`
+
+![heightAndFixed](./docs/images/heightAndFixed.png)
+
+```
+<template>
+  <div style="width: 600px">
+    <vue-table-dynamic :params="params" ref="table"></vue-table-dynamic>
+  </div>
+</template>
+
+<script>
+import VueTableDynamic from 'vue-table-dynamic'
+
+const random = () => {
+  return parseInt(Date.now() + Math.random() * 10000000).toString(16).slice(-6)
+}
+
+export default {
+  name: 'Demo',
+  data() {
+    return {
+      params: {
+        data: [
+          ['Index', `Data1`, `Data2`, `Data3`]
+        ],
+        header: 'row',
+        border: true,
+        stripe: true,
+        columnWidth: [{column: 0, width: 100}, {column: 2, width: 400}],
+        height: 180,
+        fixed: 0
+      }
+    }
+  },
+  mounted () {
+    for (let i = 0; i < 10; i++) {
+      this.params.data.push([i+1, `${random()}`, `${random()}`, `${random()}`])
+    }
+  },
+  components: { VueTableDynamic }
+}
+</script>
+```
+
 ## API
 
 ### Attributes
@@ -677,7 +777,8 @@ export default {
 | `enableSearch` | enable/disable searching, filter rows by keyword | `boolean` | `true`/`false` | `false`   |
 | `minWidth` | min width of table | `number` | - | `100` |
 | `maxWidth` | max width of table | `number` | - | `10000` |
-| `height` | table height. fix header by configure the height of table | `number` | -  | - |
+| `height` | table height. fixed header by configure the height of table | `number` | -  | - |
+| `fixed` | fixed columns  | `number`  | `>= 0` |  |
 | `headerHeight` | header height  | `number`  | `>= 24` | `30` |
 | `rowHeight` | row height  | `number`  | `>= 24` | `30` |
 | `columnWidth` | Configure column width | Array<{column:number; width:number/string;}> | - | - |
@@ -687,6 +788,7 @@ export default {
 | `pagination` | table with pagination | `boolean`  | `true`/`false` | `false`   |
 | `pageSize`  | row count of each page | `number`   | -   | `10` |
 | `pageSizes` | options of row count per page | `Array<number>`  | - | `[10, 20, 50, 100]`|
+| `scrollbar` | display of scroll bar | `string`  | `show/hover/hidden` | `show` |
 
 ### Methods
 
