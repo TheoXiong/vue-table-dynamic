@@ -969,7 +969,7 @@ export default {
       this.$emit('cell-click', rowIndex, columnIndex, tableCell.data)
     },
     /**
-   * @function Cell失去焦点
+   * @function Cell失去焦点. 如果启用了编辑功能，则用当前输入更新数据。如果源数据是number类型，则输入为number时才有效
    * @param {Object} tableCell Cell数据对象
    * @param {Number} rowIndex 行索引
    * @param {Number} columnIndex 列索引
@@ -978,9 +978,22 @@ export default {
       if (!this.isEditable(rowIndex, columnIndex)) return
 
       let cellEle = document.querySelector(`#${tableCell.key}`)
-      if (cellEle && (tableCell.data !== trim(cellEle.innerHTML))) {
-        tableCell.data = trim(cellEle.innerHTML)
-        this.$emit('cell-change', rowIndex, columnIndex, tableCell.data)
+      let newVal = trim(cellEle.innerHTML)
+
+      if (cellEle && (tableCell.data !== newVal)) {
+        if (typeof tableCell.data === 'number') {
+          newVal = Number(newVal)
+          if (tableCell.data === newVal) return
+          if (isNaN(newVal)) {
+            return (cellEle.innerHTML = `${tableCell.data}`)
+          }
+          
+          tableCell.data = newVal
+          this.$emit('cell-change', rowIndex, columnIndex, tableCell.data)
+        } else {
+          tableCell.data = trim(cellEle.innerHTML)
+          this.$emit('cell-change', rowIndex, columnIndex, tableCell.data)
+        }
       }
     },
     onCellKeyEnter (e) {
