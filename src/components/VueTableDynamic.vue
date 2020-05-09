@@ -112,7 +112,7 @@
             @size="onSize"
             ref="scrollbar" 
           >
-            <div v-for="(tableRow, i) in tableData.rows" :key="i" :style="{ minWidth: getRowMinWidth() }"> 
+            <div v-for="(tableRow, i) in tableData.activatedRows" :key="i" :style="{ minWidth: getRowMinWidth() }"> 
               <div
                 v-show="tableRow.show && !tableRow.filtered && !(pagination && !tableRow.inPage) && !(i === 0 && headerInfirstRow)" 
                 class="v-table-row flex-c"
@@ -248,7 +248,7 @@
           <!-- Fixed Body -->
           <div class="v-table-body v-table-body-fixed" :style="{ height: height }" ref="fixedBody">
             <div class="v-table-body-inner" :style="{ marginTop: fixedTop * -1 + 'px' }" @wheel="onFixedScroll" ref="fixedBodyInner">
-              <div v-for="(tableRow, i) in tableData.rows" :key="i" :style="{ minWidth: getRowMinWidth() }"> 
+              <div v-for="(tableRow, i) in tableData.activatedRows" :key="i" :style="{ minWidth: getRowMinWidth() }"> 
                 <div
                   v-show="tableRow.show && !tableRow.filtered && !(pagination && !tableRow.inPage) && !(i === 0 && headerInfirstRow)" 
                   class="v-table-row flex-c"
@@ -589,8 +589,8 @@ export default {
       immediate: true
     },
     sourceData: {
-      handler () {
-        this.initData()
+      handler (value) {
+        this.initData(value)
       },
       deep: true,
       immediate: true
@@ -640,19 +640,34 @@ export default {
     /**
    * @function 初始化Table数据
    */
-    initData () {
-      if (this.params && is2DMatrix(this.sourceData)) {
-        let table = { key: unique(`table-`), checked: false, rows: [], filteredRows: {} }
-        for (let i = 0; i < this.sourceData.length; i++) {
+    initData (sourceData) {
+      if (this.params && is2DMatrix(sourceData)) {
+        let table = { key: unique(`table-`), checked: false, rows: [], activatedRows: [], filteredRows: {} }
+        for (let i = 0; i < sourceData.length; i++) {
           let tableRow = { key: unique(`table-`), checked: false, show: true, filtered: false, inPage: false, hovering: false, index: i }
-          tableRow.cells = this.sourceData[i].map(item => {
+          tableRow.cells = sourceData[i].map(item => {
             return { data: item, key: unique(`table-`), checked: false }
           })
           table.rows.push(tableRow)
         }
         this.tableData = table
-        this.$nextTick(this.updatePagination)
+
+        if (this.pagination) {
+          this.$nextTick(this.updatePagination)
+        } else {
+          this.tableData.activatedRows = this.tableData.rows
+        }
       }
+    },
+    updateActivatedRows () {
+      if (!(this.tableData && this.tableData.rows && this.tableData.rows.length > 0)) return
+
+      this.tableData.activatedRows = this.tableData.rows.filter((row, index) => {
+        if (index === 0 && this.headerInfirstRow) return true
+        return (row.show && !row.filtered && !(this.pagination && !row.inPage))
+      })
+
+      console.log('updateActivatedRows ', this.tableData.activatedRows, this.tableData.activatedRows.length)
     },
     /**
    * @function 更新分页数据
@@ -686,6 +701,8 @@ export default {
       rows.forEach((row, index) => {
         row.inPage = !!(index >= start && index < end)
       })
+
+      this.$nextTick(this.updateActivatedRows)
     },
     /**
    * @function 每页显示条数切换事件
@@ -987,13 +1004,16 @@ export default {
         let data1 = row1.cells[index].data
         let data2 = row2.cells[index].data
         if (value === 'ascending') {
-          return data1 > data2 ? 1 : -1
+          if (data1 === data2) { return 0 } 
+          else { return data1 > data2 ? 1 : -1 }
         } else {
-          return data2 > data1 ? 1 : -1
+          if (data1 === data2) { return 0 } 
+          else { return data2 > data1 ? 1 : -1 }
         }
       })
 
       this.$emit('sort-change', index, value)
+      this.updateActivatedRows()
       this.$nextTick(this.updatePagination)
     },
     /**
@@ -1030,6 +1050,8 @@ export default {
         })
         row.filtered = !!row.filtered
       })
+
+      this.updateActivatedRows()
       this.$nextTick(this.updatePagination)
     },
     /**
@@ -1074,6 +1096,8 @@ export default {
           row.show = !!matched
         }
       })
+
+      this.updateActivatedRows()
       this.$nextTick(this.updatePagination)
     },
     /**
@@ -1084,6 +1108,9 @@ export default {
       this.tableData.rows.forEach(row => {
         row ? row.show = true : ''
       })
+
+      this.updateActivatedRows()
+      this.$nextTick(this.updatePagination)
     },
     /**
    * @function 获取选中的行数

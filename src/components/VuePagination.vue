@@ -39,6 +39,7 @@
           'is-disabled': page.disabled,
           'is-activated': page.activated && !page.disabled
         }"
+        :style="{ width: (22 + String(pageCount).length * 4 ) + 'px' }"
         @click="onPage(page)"
       >
         {{ page.value }}
