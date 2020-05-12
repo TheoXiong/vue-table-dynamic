@@ -1302,6 +1302,36 @@ export default {
       }
     },
     /**
+   * @function 设置指定行选中状态
+   * @param {Array} rows 指定的行
+   * @param {Boolean} checked true/false
+   */
+    setRowChecked (rows, checked = true) {
+      if (!(Array.isArray(rows) && rows.length > 0)) return
+
+      if (this.tableData && unemptyArray(this.tableData.rows)) {
+        let checkedRows = 0
+
+        this.tableData.rows.forEach((row, index) => {
+          if (index === 0 && this.headerInfirstRow) return
+          if (rows.includes(row.index)) {
+            row.checked = !!checked
+          }
+          checkedRows += Number(!!row.checked)
+        })
+
+        if (this.headerInfirstRow) {
+          if (checkedRows === (this.tableData.rows.length - 1)) {
+            this.tableData.rows[0].checked = true
+          } else if (checkedRows > 0) {
+            this.tableData.rows[0].checked = 'indeterminate'
+          } else {
+            this.tableData.rows[0].checked = false
+          }
+        }
+      }
+    },
+    /**
    * @function 当前显示的行数
    */
     getActivatedRowNum (includeWhenHeaderInfirstRow = false) {
