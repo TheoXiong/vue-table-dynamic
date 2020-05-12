@@ -1093,17 +1093,25 @@ export default {
     /**
    * @function 按关键字搜索，显示匹配的行
    * @param {String} searchValue 关键字
+   * @param {Array} included 在指定的列里进行匹配
+   * @param {Array} excluded 不在指定的列里匹配。优先级高于included
    */
-    search (searchValue) {
+    search (searchValue, included, excluded) {
       if (!(this.tableData && this.tableData.rows)) return
 
       searchValue = String(searchValue)
+      let isIncluded = !!(included && included.length >= 1)
+      let isExcluded = !!(excluded && excluded.length >= 1)
+
       this.tableData.rows.forEach(row => {
         if (row && row.cells) {
           if (!searchValue) {
             return row.show = true
           }
-          let matched = row.cells.some(cell => {
+
+          let matched = row.cells.some((cell, index) => {
+            if (isExcluded && excluded.includes(index)) return false
+            if (isIncluded && !included.includes(index)) return false
             return String(cell.data).toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
           })
           row.show = !!matched

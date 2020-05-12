@@ -261,7 +261,7 @@ export default {
 
 配置`enableSearch`属性，启用全局搜索功能，仅显示匹配到搜索关键字的行 
 
-- 通过`search`方法可以手动对行搜索过滤，适用于自定义搜索框（配置`enableSearch`为`false`）     
+- 通过 `search:`*`function(value:string, included:array, excluded:array)`* 方法可以手动对行搜索过滤，适用于自定义搜索框（配置`enableSearch`为`false`）     
 
 ![search](./docs/images/search.png)   
 
@@ -466,7 +466,8 @@ export default {
 - 通过`cell-change`事件，监听编辑操作        
 - 编辑会改变当前数据，不会改变传入的源数据    
 - 通过`getData`方法，可获取编辑后的最新数据       
-- 如果配置了 `header: 'row'`，则第一行表头不可编辑       
+- 如果配置了 `header: 'row'`，则第一行表头不可编辑   
+- 如果源数据为`number`类型， 则仅在输入数字时有效    
 
 ![edit](./docs/images/edit.png)  
 
@@ -790,7 +791,7 @@ export default {
 | `getData`  | 获取表格数据。当使用编辑功能时，可使用此方法获取编辑后的最新数据 | 无    | `Array<[number, ..., number]>` |
 | `getCheckedRowDatas` | 使用多选功能时，获取选中行的数据 | `includeWhenHeaderInfirstRow: boolean` 当首行为表头时，是否包含表头行，默认`false` | `Array<[number, ..., number]>` |
 | `getRowData` | 根据行索引获取指定行的数据  | `rowIndex: number` 行索引；`isCurrent: boolean`索引是否为排序后的索引，默认false，即原始索引 | `Array<number>` |
-| `search`  | 手动对行搜索过滤，适用于自定义搜索框（配置`enableSearch`为`false`） | `searchValue: string`搜索的关键字   | 无 |
+| `search`  | 手动对行搜索过滤，适用于自定义搜索框（配置`enableSearch`为`false`） | `searchValue: string`搜索的关键字; `included:array` 在指定的列里进行匹配; `excluded:array` 不在指定的列里匹配, 优先级高于`included` | 无 |
 | `clearSearch`  | 取消搜索过滤，显示所有行 | 无  | 无  |
 | `toPage`  | (分页时)跳转到目标页 | `tagetPage:number` 目标页索引  | -  |
 

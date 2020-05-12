@@ -269,7 +269,7 @@ export default {
 Filter rows by keyword
 
 - `enableSearch:`*`boolean`* enable/disable searching
-- `search:`*`function(value:string)`* manual row filtering     
+- `search:`*`function(value:string, included:array, excluded:array)`* manual row filtering     
 
 ![search](./docs/images/search.png)   
 
@@ -474,7 +474,8 @@ Support specifying rows/columns/cells for editing
 - `getData:`*`function()`* table data changed after editing, get the latest data by this method.
 - `cell-change:`*`event`* cell data changed event
 - `edit:`*`{row: 'all'}`* all cells can be edited      
-- if `header` is *`'row'`*, the first row is not editable        
+- if `header` is *`'row'`*, the first row is not editable    
+- if the type of source data item is `number`, only acceptable when entering numbers    
 
 ![edit](./docs/images/edit.png)  
 
@@ -797,7 +798,7 @@ export default {
 | `getData`  | table data changed after editing, get the latest data by this method | - | `Array<[number, ..., number]>` |
 | `getCheckedRowDatas` | get data for all currently selected rows | `includeWhenHeaderInfirstRow: boolean` include header row when the first row is header，default is `false` | `Array<[number, ..., number]>` |
 | `getRowData` | get row data by index | `rowIndex:number` index；`isCurrent: boolean` is the index sorted，default is `false` | `Array<number>` |
-| `search`  | manual row filtering | `searchValue:string` keyword | - |
+| `search`  | manual row filtering | `searchValue:string` keyword; `included:array` match in specified column; `excluded:array` not match in specified column, priority over `included` | - |
 | `clearSearch`  | clear searching, show all rows | -  | -  |
 | `toPage`  | switch to the target page, when pagination is enable | `tagetPage:number` page to switch  | -  |
 

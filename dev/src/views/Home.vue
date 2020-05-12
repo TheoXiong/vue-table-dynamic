@@ -101,7 +101,7 @@ const defaultTableParams = {
   // pageSizes: [5, 15, 30, 50, 100],
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 200; i++) {
   defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
 }
 
