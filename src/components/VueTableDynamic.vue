@@ -1157,19 +1157,28 @@ export default {
     /**
    * @function 获取选中的行（排序前）的原始索引。返回的索引列表与是否排序无关
    * @param {Boolean} includeWhenHeaderInfirstRow 是否检查第一行表头。默认false
+   * @param {Boolean} excludeFiltered 是否排除被（搜索/列过滤）过滤掉的（已勾选）行。默认false
+   * @param {Boolean} excludeNotInPage 在启用分页情况下，是否排除不在当前页的（已勾选）行。默认false
    */
-    getCheckedRowIndexs (includeWhenHeaderInfirstRow = false) {
+    getCheckedRowIndexs (includeWhenHeaderInfirstRow = false, excludeFiltered = false, excludeNotInPage = false) {
       if (!this.showCheck) return []
 
       if (this.tableData && unemptyArray(this.tableData.rows)) {
         let indexs = []
+
         this.tableData.rows.forEach((row, index) => {
           if (index === 0 && this.headerInfirstRow) {
             if (!includeWhenHeaderInfirstRow) return
             if (row.checked !== false) return indexs.push(row.index)
           }
-          if (row.checked) indexs.push(row.index)
+
+          if (row.checked) {
+            if (excludeFiltered && (!row.show || row.filtered)) return
+            if (excludeNotInPage && this.pagination && !row.inPage) return
+            indexs.push(row.index)
+          }
         })
+
         return indexs
       }
 
