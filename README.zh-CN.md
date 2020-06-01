@@ -803,6 +803,7 @@ export default {
 | `select-all`  | 全选/取消全选            | `isCheckedAll: boolean`                                      |
 | `row-click`   | 点击行                   | ` index: number`; ` data: Array<string\number>`              |
 | `cell-click`  | 点击表格单元             | `rowIndex: number`;  `columnIndex: number`; ` data: string\number` |
+| `cell-contextmenu`  | 右键表格单元       | `rowIndex: number`;  `columnIndex: number`; ` data: string\number` |
 | `cell-change` | 表格单元数据（编辑）改变 | `rowIndex: number`;  `columnIndex: number`; ` data: string\number` |
 | `sort-change` | 排序                     | `index: number`;  `value: string`                            |
 

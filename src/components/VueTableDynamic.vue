@@ -55,6 +55,7 @@
               :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
               :style="getCellStyle(0, j)"
               @click="onClickCell(tableCell, 0, j)"
+              @contextmenu.stop.prevent="onContextmenuCell(tableCell, 0, j)"
             >
               <span 
                 v-if="!(fixedColumn.includes(j))"
@@ -146,6 +147,7 @@
                   :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
                   :style="getCellStyle(tableRow.index, j)"
                   @click="onClickCell(tableCell, tableRow.index, j)"
+                  @contextmenu.stop.prevent="onContextmenuCell(tableCell, tableRow.index, j)"
                 >
                   <span
                     v-if="!(fixedColumn.includes(j))"
@@ -202,6 +204,7 @@
               :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
               :style="getCellStyle(0, j)"
               @click="onClickCell(tableCell, 0, j)"
+              @contextmenu.stop.prevent="onContextmenuCell(tableCell, 0, j)"
             >
               <span 
                 v-if="fixedColumn.includes(j)"
@@ -282,6 +285,7 @@
                     :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
                     :style="getCellStyle(tableRow.index, j)"
                     @click="onClickCell(tableCell, tableRow.index, j)"
+                    @contextmenu.stop.prevent="onContextmenuCell(tableCell, tableRow.index, j)"
                   >
                     <span
                       v-if="fixedColumn.includes(j)"
@@ -948,6 +952,9 @@ export default {
       if (isFixedBody && this.$refs.scrollbar && this.$refs.scrollbar.onMouseleave) {
         this.$refs.scrollbar.onMouseleave()
       }
+    },
+    onContextmenuCell (tableCell, rowIndex, columnIndex) {
+      this.$emit('cell-contextmenu', rowIndex, columnIndex, tableCell.data)
     },
     onMouseenterTable () {
       if (this.$refs.hscroll) {

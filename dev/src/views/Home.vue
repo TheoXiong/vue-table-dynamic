@@ -42,6 +42,7 @@
           @selection-change="onSelectionChange"
           @row-click="onRowClick"
           @cell-click="onCellClick"
+          @cell-contextmenu="onCellContextmenu"
           @download="onDownload"
           ref="table"
         >
@@ -306,6 +307,9 @@ export default {
     },
     onCellClick (rowIndex, columnIndex, data) {
       console.log('[ onCellClick ]: ', rowIndex, columnIndex, data)
+    },
+    onCellContextmenu (rowIndex, columnIndex, data) {
+      console.log('[ onCellContextmenu ]: ', rowIndex, columnIndex, data)
     },
     onDownload (datas) {
       if (!(datas && datas.length > 0)) {

@@ -810,6 +810,7 @@ export default {
 | `select-all` | event when clicking the checkbox in table header | `isCheckedAll: boolean` |
 | `row-click` | event when clicking a row | ` index:number`; `data:Array<string\number>` |
 | `cell-click` | event when clicking a cell | `rowIndex:number`; `columnIndex:number`; ` data:string\number` |
+| `cell-contextmenu` | event when opening a cell's context menu | `rowIndex:number`; `columnIndex:number`; ` data:string\number` |
 | `cell-change` | event when edting a cell | `rowIndex:number`; `columnIndex:number`; `data:string\number` |
 | `sort-change` | event when sorting | `index: number`; `value: string` |
 
