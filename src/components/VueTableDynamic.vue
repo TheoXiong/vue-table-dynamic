@@ -670,8 +670,6 @@ export default {
         if (index === 0 && this.headerInfirstRow) return true
         return (row.show && !row.filtered && !(this.pagination && !row.inPage))
       })
-
-      console.log('updateActivatedRows ', this.tableData.activatedRows, this.tableData.activatedRows.length)
     },
     /**
    * @function 更新分页数据
