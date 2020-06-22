@@ -85,7 +85,12 @@ const defaultTableParams = {
   enableSearch: true,
   columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }, {column: 3, width: 800 }],
   fixed: 1,
-  sort: [0, 1],
+  sort: [0, { 
+    column: 1, 
+    ascending: (a, b) => { return parseInt(a) > parseInt(b) ? 1 : -1 }, 
+    descending: (a, b) => { return parseInt(b) > parseInt(a) ? 1 : -1 } 
+    }
+  ],
   edit: {},
   highlight: {},
   filter: [{
@@ -103,7 +108,8 @@ const defaultTableParams = {
 }
 
 for (let i = 0; i < 200; i++) {
-  defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
+  // defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
+  defaultTableParams.data.push([i+1, `${Math.floor(Math.random() * 15)} out of 15`, `${random()}-Cell`, `${random()}-Cell`])
 }
 
 const tableHeaderTypes = ['', 'row', 'column']

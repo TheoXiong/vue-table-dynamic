@@ -67,7 +67,7 @@
                 >
                   {{ tableCell.data }}
                 </span>
-                <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: '30px' }">
+                <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
                   <i 
                     class="sort-btns sort-ascending" 
                     :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
@@ -216,7 +216,7 @@
                 >
                   {{ tableCell.data }}
                 </span>
-                <span v-if="sortConfig.includes(j)" class="table-sort flex-dir-column" :style="{ height: '30px' }">
+                <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
                   <i 
                     class="sort-btns sort-ascending" 
                     :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
@@ -535,9 +535,18 @@ export default {
     },
     sortConfig () {
       if (this.params && this.params.header === 'row' && Array.isArray(this.params.sort)) {
-        return this.params.sort
+        let conf = {}
+        this.params.sort.forEach(s => {
+          if (typeof s === 'number' && s >= 0) {
+            conf[s] = {}
+          } else if (s && typeof s === 'object' && typeof s.column === 'number' && (typeof s.ascending === 'function' || typeof s.descending === 'function')) {
+            conf[s.column] = s
+          }
+        })
+
+        return conf
       }
-      return []
+      return {}
     },
     editConfig () {
       if (this.params && this.params.edit && typeof this.params.edit === 'object') {
@@ -670,8 +679,6 @@ export default {
         if (index === 0 && this.headerInfirstRow) return true
         return (row.show && !row.filtered && !(this.pagination && !row.inPage))
       })
-
-      console.log('updateActivatedRows ', this.tableData.activatedRows, this.tableData.activatedRows.length)
     },
     /**
    * @function 更新分页数据
@@ -1017,6 +1024,26 @@ export default {
 
       this.activatedSort = {}
       this.activatedSort[index] = value
+
+      // 默认排序规则
+      let ascending = (a, b) => { 
+        if (a === b) { return 0 }
+        else { return a > b ? 1 : -1 }
+      }
+      let descending = (a, b) => { 
+        if (a === b) { return 0 }
+        else { return b > a ? 1 : -1 }
+      }
+
+      // 自定义排序规则
+      if (this.sortConfig && this.sortConfig[index]) {
+        if (typeof this.sortConfig[index].ascending === 'function') {
+          ascending = this.sortConfig[index].ascending
+        }
+        if (typeof this.sortConfig[index].descending === 'function') {
+          descending = this.sortConfig[index].descending
+        }
+      }
       
       this.tableData.rows.sort((row1, row2) => {
         if (row1.index === 0) return -1
@@ -1024,11 +1051,9 @@ export default {
         let data1 = row1.cells[index].data
         let data2 = row2.cells[index].data
         if (value === 'ascending') {
-          if (data1 === data2) { return 0 } 
-          else { return data1 > data2 ? 1 : -1 }
+          return ascending(data1, data2)
         } else {
-          if (data1 === data2) { return 0 } 
-          else { return data2 > data1 ? 1 : -1 }
+          return descending(data1, data2)
         }
       })
 
