@@ -102,14 +102,16 @@ const defaultTableParams = {
     content: [{text: '1-Cell', value: '1-Cell'}, {text: '2-Cell', value: '2-Cell'}, {text: '3-Cell', value: '3-Cell'}], 
     method: (value, tableCell) => { return String(tableCell.data).toLocaleLowerCase().includes(String(value).toLocaleLowerCase()) }
   }],
+  style: {
+    row: [{ scope: [0], styles: { color: '#409EFF'}}]
+  },
   pagination: true,
   // pageSize: 20,
   // pageSizes: [5, 15, 30, 50, 100],
 }
 
 for (let i = 0; i < 200; i++) {
-  // defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
-  defaultTableParams.data.push([i+1, `${Math.floor(Math.random() * 15)} out of 15`, `${random()}-Cell`, `${random()}-Cell`])
+  defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
 }
 
 const tableHeaderTypes = ['', 'row', 'column']

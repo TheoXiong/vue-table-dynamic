@@ -63,7 +63,7 @@
               >
                 <span 
                   class="table-cell-content" 
-                  :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+                  :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(0, j) }"
                 >
                   {{ tableCell.data }}
                 </span>
@@ -153,7 +153,7 @@
                     v-if="!(fixedColumn.includes(j))"
                     class="table-cell-content"
                     :class="{'fill-width': i !== 0}"
-                    :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+                    :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(tableRow.index, j) }"
                     :contenteditable="isEditable(tableRow.index, j)"
                     :id="tableCell.key"
                     @blur="onCellBlur(tableCell, tableRow.index, j)"
@@ -212,7 +212,7 @@
               >
                 <span 
                   class="table-cell-content" 
-                  :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+                  :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(0, j) }"
                 >
                   {{ tableCell.data }}
                 </span>
@@ -291,7 +291,7 @@
                       v-if="fixedColumn.includes(j)"
                       class="table-cell-content"
                       :class="{'fill-width': i !== 0}"
-                      :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow }"
+                      :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(tableRow.index, j) }"
                       :contenteditable="isEditable(tableRow.index, j)"
                       :id="tableCell.key"
                       @blur="onCellBlur(tableCell, tableRow.index, j)"
@@ -551,6 +551,12 @@ export default {
     editConfig () {
       if (this.params && this.params.edit && typeof this.params.edit === 'object') {
         return this.params.edit
+      }
+      return {}
+    },
+    styleConfig () {
+      if (this.params && this.params.style && typeof this.params.style === 'object') {
+        return this.params.style
       }
       return {}
     },
@@ -885,6 +891,52 @@ export default {
       }
 
       return false
+    },
+    getStyleCustomized (rowIndex, columnIndex) {
+      if (!(this.styleConfig && (this.styleConfig.row || this.styleConfig.column || this.styleConfig.cell))) return {}
+
+      if (Array.isArray(this.styleConfig.row)) {
+        for (let i = 0; i < this.styleConfig.row.length; i++) {
+          let item = this.styleConfig.row[i]
+          if (typeof item.styles === 'object') {
+            if (item.scope === 'all') { return item.styles }
+            else if (Array.isArray(item.scope) && 
+              (item.scope.includes(rowIndex) || item.scope.includes(rowIndex - this.sourceData.length))) {
+              return item.styles
+            }
+          }
+        }
+      }
+      
+      if (Array.isArray(this.styleConfig.column)) {
+        for (let i = 0; i < this.styleConfig.column.length; i++) {
+          let item = this.styleConfig.column[i]
+          if (typeof item.styles === 'object') {
+            if (item.scope === 'all') { return item.styles }
+            else if (Array.isArray(item.scope) && 
+              (item.scope.includes(columnIndex) || item.scope.includes(columnIndex - this.sourceData[0].length))) {
+              return item.styles
+            }
+          }
+        }
+      }
+
+      if (Array.isArray(this.styleConfig.cell)) {
+        for (let i = 0; i < this.styleConfig.cell.length; i++) {
+          let item = this.styleConfig.cell[i]
+          if (typeof item.styles === 'object') {
+            if (item.scope === 'all') { return item.styles }
+            else if (Array.isArray(item.scope)) {
+              let included = item.scope.some(s => {
+                return (Array.isArray(s) && s.length >= 2 && (s[0] === rowIndex || s[0] === (rowIndex - this.sourceData.length)) && (s[1] === columnIndex || s[1] === (columnIndex - this.sourceData[0].length)))
+              })
+              if (included) return item.styles
+            }
+          }
+        }
+      }
+
+      return {}
     },
     /**
    * @function 勾选所有Row
