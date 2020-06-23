@@ -83,7 +83,8 @@ const defaultTableParams = {
   stripe: true,
   showCheck: true,
   enableSearch: true,
-  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }, {column: 3, width: 800 }],
+  activedColor: 'rgb(37,121,147)',
+  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }],
   fixed: 1,
   sort: [0, { 
     column: 1, 

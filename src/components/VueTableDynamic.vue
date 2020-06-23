@@ -69,14 +69,18 @@
                 </span>
                 <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
                   <i 
-                    class="sort-btns sort-ascending" 
-                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
+                    class="sort-btns sort-ascending"
+                    :style="{
+                      borderBottomColor: (activatedSort[j] && activatedSort[j] === 'ascending') ? activedColor : '#C0C4CC'
+                    }"
                     @click.stop="onSort(j, 'ascending')"
                   >
                   </i>
                   <i 
                     class="sort-btns sort-descending" 
-                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'descending' }"
+                    :style="{
+                      borderTopColor: (activatedSort[j] && activatedSort[j] === 'descending') ? activedColor : '#C0C4CC'
+                    }"
                     @click.stop="onSort(j, 'descending')"
                   >
                   </i>
@@ -92,7 +96,7 @@
                     @reset="clearFilter(j)"
                   >
                     <i slot="reference" class="iconfont icondown"
-                      :class="{ 'activated': !!activatedFilter[j] }">
+                      :style="{ color: activatedFilter[j] ? activedColor : '#C0C4CC' }">
                     </i>
                   </filter-panel>
                 </span>
@@ -219,13 +223,17 @@
                 <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
                   <i 
                     class="sort-btns sort-ascending" 
-                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'ascending' }"
+                    :style="{
+                      borderBottomColor: (activatedSort[j] && activatedSort[j] === 'ascending') ? activedColor : '#C0C4CC'
+                    }"
                     @click.stop="onSort(j, 'ascending')"
                   >
                   </i>
                   <i 
-                    class="sort-btns sort-descending" 
-                    :class="{ 'activated': activatedSort[j] && activatedSort[j] === 'descending' }"
+                    class="sort-btns sort-descending"
+                    :style="{
+                      borderTopColor: (activatedSort[j] && activatedSort[j] === 'descending') ? activedColor : '#C0C4CC'
+                    }"
                     @click.stop="onSort(j, 'descending')"
                   >
                   </i>
@@ -241,7 +249,8 @@
                     @reset="clearFilter(j)"
                   >
                     <i slot="reference" class="iconfont icondown" 
-                      :class="{ 'activated': !!activatedFilter[j] }">
+                      :style="{ color: activatedFilter[j] ? activedColor : '#C0C4CC' }"
+                    >
                     </i>
                   </filter-panel>
                 </span>
@@ -403,6 +412,7 @@ export default {
     // params.edit: (Object) 配置可编辑的 行/列/表单元。 如：{ row: [2, 3, ... ], column: [3, 4, ... ], cell: [[4, 4], [5, 6], ... ] } ；负数表示倒序（如-1为最后1行/列）；row: 'all' 所有行
     //                      编辑会改变表格显示的数据，不会改变传入的源数据。调用组件方法获取表格数据时，返回编辑后的数据。表头不可编辑。默认禁用
     // params.filter: (Array) 配置基于列的筛选。如： [{column: 0, content: [{text: '> 5', value: 5}], method: (value, tableCell) => { ... }}]
+    // params.activedColor: (string) 表头排序/过滤按钮激活后的颜色
     // params.pagination: (Boolean) 是否启用分页功能。默认false
     // params.pageSize: (Number) 每页显示条数
     // params.pageSizes: (Array) 每页显示条数的可选值
@@ -559,6 +569,12 @@ export default {
         return this.params.style
       }
       return {}
+    },
+    activedColor () {
+      if (this.params && this.params.activedColor && typeof this.params.activedColor === 'string') {
+        return this.params.activedColor
+      }
+      return '#409EFF'
     },
     filterConfig () {
       if (this.params && unemptyArray(this.params.filter)) {
