@@ -84,6 +84,7 @@ const defaultTableParams = {
   showCheck: true,
   enableSearch: true,
   activedColor: 'rgb(37,121,147)',
+  headerBgColor: '#efefef',
   columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }],
   fixed: 1,
   sort: [0, { 

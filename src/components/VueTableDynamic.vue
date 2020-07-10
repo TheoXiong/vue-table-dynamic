@@ -28,7 +28,8 @@
             :style="{ 
               height: headerHeight + 'px', 
               minWidth: getRowMinWidth(),
-              marginLeft: this.headerLeft * -1 +'px'
+              marginLeft: this.headerLeft * -1 +'px',
+              backgroundColor: headerBgColor
             }"
             @mouseenter="onMouseenter(tableData.rows[0])" 
             @mouseleave="onMouseleave(tableData.rows[0])"
@@ -181,7 +182,8 @@
             :class="{ 'is-striped': rowStripe, 'v-show-border': tableBorder, 'is-hovering': tableData.rows[0].hovering }"
             :style="{ 
               height: headerHeight + 'px',
-              minWidth: getRowMinWidth()
+              minWidth: getRowMinWidth(),
+              backgroundColor: headerBgColor
             }"
             @mouseenter="onMouseenter(tableData.rows[0])" 
             @mouseleave="onMouseleave(tableData.rows[0])"
@@ -442,6 +444,12 @@ export default {
         return this.params.highlightedColor
       }
       return '#EBEBEF'
+    },
+    headerBgColor () {
+      if (this.params && this.params.headerBgColor && typeof this.params.headerBgColor === 'string') {
+        return this.params.headerBgColor
+      }
+      return ''
     },
     wordWrap () {
       if (this.params && this.params.wordWrap && wordWrapList.includes(this.params.wordWrap)) {
