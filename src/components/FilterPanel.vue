@@ -195,8 +195,8 @@ $lineColor: #E5EEF5;
 
 .filter-check{
   box-sizing: border-box;
-  height: 14px;
-  width: 14px;
+  height: 12px;
+  width: 12px;
   font-weight: 400;
   color: #606266;
   border: 1px solid $borderColor;
