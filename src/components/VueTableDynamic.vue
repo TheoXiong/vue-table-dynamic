@@ -56,7 +56,8 @@
               :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
               :style="getCellStyle(0, j)"
               @click="onClickCell(tableCell, 0, j)"
-              @contextmenu.stop.prevent="onContextmenuCell(tableCell, 0, j)"
+              @dblclick.exact.stop="onDblclickCell(tableCell, 0, j)"
+              @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, 0, j)"
             >
               <span 
                 v-if="!(fixedColumn.includes(j))"
@@ -152,7 +153,8 @@
                   :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
                   :style="getCellStyle(tableRow.index, j)"
                   @click="onClickCell(tableCell, tableRow.index, j)"
-                  @contextmenu.stop.prevent="onContextmenuCell(tableCell, tableRow.index, j)"
+                  @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j)"
+                  @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, tableRow.index, j)"
                 >
                   <span
                     v-if="!(fixedColumn.includes(j))"
@@ -210,7 +212,8 @@
               :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
               :style="getCellStyle(0, j)"
               @click="onClickCell(tableCell, 0, j)"
-              @contextmenu.stop.prevent="onContextmenuCell(tableCell, 0, j)"
+              @dblclick.exact.stop="onDblclickCell(tableCell, 0, j)"
+              @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, 0, j)"
             >
               <span 
                 v-if="fixedColumn.includes(j)"
@@ -296,7 +299,8 @@
                     :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
                     :style="getCellStyle(tableRow.index, j)"
                     @click="onClickCell(tableCell, tableRow.index, j)"
-                    @contextmenu.stop.prevent="onContextmenuCell(tableCell, tableRow.index, j)"
+                    @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j)"
+                    @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, tableRow.index, j)"
                   >
                     <span
                       v-if="fixedColumn.includes(j)"
@@ -1036,8 +1040,8 @@ export default {
         this.$refs.scrollbar.onMouseleave()
       }
     },
-    onContextmenuCell (tableCell, rowIndex, columnIndex) {
-      this.$emit('cell-contextmenu', rowIndex, columnIndex, tableCell.data)
+    onContextmenuCell (event, tableCell, rowIndex, columnIndex) {
+      this.$emit('cell-contextmenu', event, rowIndex, columnIndex, tableCell.data)
     },
     onMouseenterTable () {
       if (this.$refs.hscroll) {
@@ -1057,6 +1061,15 @@ export default {
    */
     onClickCell (tableCell, rowIndex, columnIndex) {
       this.$emit('cell-click', rowIndex, columnIndex, tableCell.data)
+    },
+    /**
+   * @function 双击Cell事件
+   * @param {Object} tableCell Cell数据对象
+   * @param {Number} rowIndex 行索引
+   * @param {Number} columnIndex 列索引
+   */
+    onDblclickCell (tableCell, rowIndex, columnIndex) {
+      this.$emit('cell-dblclick', rowIndex, columnIndex, tableCell.data)
     },
     /**
    * @function Cell失去焦点. 如果启用了编辑功能，则用当前输入更新数据。如果源数据是number类型，则输入为number时才有效
