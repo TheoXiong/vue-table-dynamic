@@ -344,6 +344,7 @@
           :page-size="pageSize"
           :page-sizes="pageSizes"
           :total="totalPages" 
+          :show-total="showTotal"
           :disabled="!pagination"
           @current-page="onPageChange"
           @size="onPageSizeChange"
@@ -617,6 +618,9 @@ export default {
         return this.params.pageSizes
       }
       return [10, 20, 50, 100]
+    },
+    showTotal () {
+      return !!(this.params && this.params.showTotal)
     },
     scrollbarDisplay () {
       if (this.params && scrollbarDisplayList.includes(this.params.scrollbar)) {

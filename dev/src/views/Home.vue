@@ -108,6 +108,7 @@ const defaultTableParams = {
     row: [{ scope: [0], styles: { color: '#409EFF'}}]
   },
   pagination: true,
+  // showTotal: true,
   // pageSize: 20,
   // pageSizes: [5, 15, 30, 50, 100],
 }

@@ -1,5 +1,8 @@
 <template>
   <div class="vue-pagination flex-c-e" v-if="!disabled">
+    <div v-if="showTotal && total >= 0" class="pagination-total">
+      Total {{total}}
+    </div>
     <div 
       v-if="pageSizes && pageSizes.length > 0" 
       class="pagination-size flex-c-b"
@@ -76,7 +79,8 @@ export default {
     total: Number,
     pageSize: Number,
     pageSizes: { type: Array, default: () => [10, 20, 50, 100]},
-    disabled: { type: Boolean, default: false }
+    disabled: { type: Boolean, default: false },
+    showTotal: { type: Boolean, default: false }
   },
   computed: {
     disableForward () {
@@ -226,7 +230,18 @@ export default {
 <style lang="scss" scoped>
 $borderColor: #DCDFE6;
 
+.pagination-total{
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  height: 22px;
+  line-height: 22px;
+  margin-right: 12px;
+  font-size: 12px;
+  color: #606266;
+}
+
 .pagination-size{
+  font-family: Arial, Helvetica, sans-serif;
   position: relative;
   box-sizing: border-box;
   height: 22px;
@@ -279,6 +294,7 @@ $borderColor: #DCDFE6;
 }
 
 .page-item{
+  font-family: Arial, Helvetica, sans-serif;
   box-sizing: border-box;
   height: 22px;
   width: 22px;
