@@ -83,7 +83,7 @@ const defaultTableParams = {
   stripe: true,
   showCheck: true,
   enableSearch: true,
-  activedColor: 'rgb(37,121,147)',
+  // activedColor: '#046FDB',
   headerBgColor: '#efefef',
   columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }],
   fixed: 1,
@@ -104,9 +104,9 @@ const defaultTableParams = {
     content: [{text: '1-Cell', value: '1-Cell'}, {text: '2-Cell', value: '2-Cell'}, {text: '3-Cell', value: '3-Cell'}], 
     method: (value, tableCell) => { return String(tableCell.data).toLocaleLowerCase().includes(String(value).toLocaleLowerCase()) }
   }],
-  style: {
-    row: [{ scope: [0], styles: { color: '#409EFF'}}]
-  },
+  // style: {
+  //   row: [{ scope: [0], styles: { color: '#046FDB'}}]
+  // },
   pagination: true,
   // showTotal: true,
   // pageSize: 20,

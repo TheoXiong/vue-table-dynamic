@@ -60,7 +60,7 @@ export default {
     inputBackground: { type: String, default: '#FFFFFF' },
     inputBorderColor: { type: String, default: '#DCDFE6' },
     inputBorderColorHovering: { type: String, default: '#C0C4CC' },
-    inputBorderColorFocused: { type: String, default: '#409EFF' },
+    inputBorderColorFocused: { type: String, default: '#046FDB' },
     prefixIcon: String,
     suffixIcon: String
   },

@@ -104,7 +104,7 @@ export default {
   border-radius: 2;
 }
 .vue-button--text:hover{
-  border: 1px solid #409EFF;
+  border: 1px solid #046FDB;
   outline: 0;
   border-radius: 2;
 }
@@ -127,7 +127,7 @@ export default {
 .vue-button--text.is-activated:focus,
 .vue-button--text.is-activated:hover{
   background:#EAEAF3;
-  border: 1px solid #409EFF;
+  border: 1px solid #046FDB;
   outline: 0;
   border-radius: 2;
 }

@@ -228,20 +228,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$borderColor: #DCDFE6;
+$textColor: rgba(0,0,0,0.85);
+$normalColor: rgba(0,0,0,0.65);
+$disabledColor: rgba(0,0,0,0.25);
+$borderColor: rgba(217,217,217,1);
+$activeColor: #046FDB;
+$fontFamily: Arial, Helvetica, sans-serif;
 
 .pagination-total{
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: $fontFamily;
   box-sizing: border-box;
   height: 22px;
   line-height: 22px;
   margin-right: 12px;
   font-size: 12px;
-  color: #606266;
+  color: $textColor;
 }
 
 .pagination-size{
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: $fontFamily;
   position: relative;
   box-sizing: border-box;
   height: 22px;
@@ -250,7 +255,7 @@ $borderColor: #DCDFE6;
   margin-right: 12px;
   font-size: 12px;
   font-weight: 500;
-  color: #606266;
+  color: $textColor;
   outline: 0;
   border: 1px solid $borderColor;
   cursor: pointer;
@@ -276,7 +281,7 @@ $borderColor: #DCDFE6;
     bottom: calc(100% + 2px);
     left: -1px;
     right: -1px;
-    border: 1px solid #E5EEF5;
+    border: 1px solid $borderColor;
     box-shadow: 0px 2px 12px 0 rgba(0,0,0,0.1);
     overflow: hidden;
     background-color: #FFFFFF;
@@ -299,7 +304,7 @@ $borderColor: #DCDFE6;
   height: 22px;
   width: 22px;
   font-size: 12px;
-  color: #606266;
+  color: $textColor;
   border: 1px solid $borderColor;
   border-right: none;
   outline: 0;
@@ -336,8 +341,8 @@ $borderColor: #DCDFE6;
 
 .page-item.is-activated{
   color: #FFFFFF;
-  border-color: #409EFF;
-  background-color: #409EFF;
+  border-color: $activeColor;
+  background-color: $activeColor;
 }
 
 .page-item.is-disabled,

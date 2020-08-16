@@ -159,15 +159,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$borderColor: #DCDFE6;
-$lineColor: #E5EEF5;
+$textColor: rgba(0,0,0,0.85);
+$normalColor: rgba(0,0,0,0.65);
+$disabledColor: rgba(0,0,0,0.25);
+$borderColor: rgba(217,217,217,1);
+$activeColor: #046FDB;
+$fontFamily: Arial, Helvetica, sans-serif;
 
 .filter-content{
   position: fixed;
   z-index: 9999;
   padding: 10px;
   background-color: #FFFFFF;
-  border: 1px solid $lineColor;
+  border: 1px solid $borderColor;
   border-radius: 2px;
   box-shadow: 0px 2px 12px 0 rgba(0,0,0,0.1);
   box-sizing: border-box;
@@ -182,7 +186,7 @@ $lineColor: #E5EEF5;
     padding: 4px 0px;
     .filter-text{
       margin-left: 6px;
-      color: #606266;
+      color: $textColor;
       font-size: 12px;
       font-weight: 500;
       overflow: hidden;
@@ -198,7 +202,7 @@ $lineColor: #E5EEF5;
   height: 12px;
   width: 12px;
   font-weight: 400;
-  color: #606266;
+  color: $textColor;
   border: 1px solid $borderColor;
   border-radius: 2px;
   cursor: pointer;
@@ -208,19 +212,19 @@ $lineColor: #E5EEF5;
   }
 }
 .filter-check:hover{
-  border-color: #409EFF;
+  border-color: $activeColor;
 }
 .filter-check.is-checked{
-  border-color: #409EFF;
-  background-color: #409EFF;
+  border-color: $activeColor;
+  background-color: $activeColor;
   color: #FFFFFF;
 }
 
 .filter-footer{
   padding-top: 10px;
-  color: #606266;
+  color: $textColor;
   font-size: 12px;
-  border-top: 1px solid $lineColor;
+  border-top: 1px solid $borderColor;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -230,7 +234,7 @@ $lineColor: #E5EEF5;
     cursor: pointer;
   }
   .filter-btns:hover{
-    color: #409EFF;
+    color: $activeColor;
   }
 }
 
@@ -239,7 +243,7 @@ $lineColor: #E5EEF5;
 .do-filter.is-diabled:focus,
 .do-filter.is-diabled:active{
   cursor:not-allowed;
-  color: #c0c4cc;
+  color: $disabledColor;
 }
 
 .zoom-in-top-enter-active,

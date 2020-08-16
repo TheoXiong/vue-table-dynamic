@@ -587,7 +587,7 @@ export default {
       if (this.params && this.params.activedColor && typeof this.params.activedColor === 'string') {
         return this.params.activedColor
       }
-      return '#409EFF'
+      return '#046FDB'
     },
     filterConfig () {
       if (this.params && unemptyArray(this.params.filter)) {
@@ -1558,15 +1558,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$borderColor: #DCDFE6;
+
+$textColor: rgba(0,0,0,0.85);
+$normalColor: rgba(0,0,0,0.65);
+$disabledColor: rgba(0,0,0,0.25);
+$borderColor: rgba(217,217,217,1);
+$activeColor: #046FDB;
+$fontFamily: Arial, Helvetica, sans-serif;
 
 .v-table-dynamic{
   width: 100%;
   display: block;
   box-sizing: border-box;
-  font-family: Helvetica, Arial, 'Microsoft YaHei';
+  font-family: $fontFamily;
   font-size: 13px;
-  color: #606266;
+  color: $textColor;
   padding-bottom: 10px;
   overflow: hidden;
 }
@@ -1678,7 +1684,7 @@ $borderColor: #DCDFE6;
   height: 12px;
   width: 12px;
   font-weight: 400;
-  color: #606266;
+  color: $textColor;
   border: 1px solid $borderColor;
   border-radius: 2px;
   cursor: pointer;
@@ -1689,15 +1695,15 @@ $borderColor: #DCDFE6;
 }
 .table-check-all:hover,
 .table-check-row:hover{
-  border-color: #409EFF;
+  border-color: $activeColor;
 }
 .table-check-all{
   margin-right: 8px;
 }
 .table-check-all.is-checked,
 .table-check-row.is-checked{
-  border-color: #409EFF;
-  background-color: #409EFF;
+  border-color: $activeColor;
+  background-color: $activeColor;
   color: #FFFFFF;
 }
 
@@ -1771,10 +1777,10 @@ $borderColor: #DCDFE6;
     bottom: 4px;
   }
   .sort-ascending.activated{
-    border-bottom-color: #409EFF;
+    border-bottom-color: $activeColor;
   }
   .sort-descending.activated{
-    border-top-color: #409EFF;
+    border-top-color: $activeColor;
   }
 }
 
@@ -1784,12 +1790,12 @@ $borderColor: #DCDFE6;
   line-height: 100%;
   vertical-align: middle;
   cursor: pointer;
-  color: #909399;
+  color: $normalColor;
   i.iconfont{
     font-size: 12px;
   }
   i.iconfont.activated{
-    color: #409EFF;
+    color: $activeColor;
   }
 }
 
