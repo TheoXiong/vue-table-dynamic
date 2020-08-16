@@ -135,7 +135,7 @@ export default {
 /* mini button style*/
 .vue-button--mini{
   font-size: 12px;
-  padding: 6px 8px;
+  padding: 5px 8px;
 }
 
 /* medium button style*/

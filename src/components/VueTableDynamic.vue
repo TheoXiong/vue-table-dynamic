@@ -156,18 +156,24 @@
                   @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j)"
                   @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, tableRow.index, j)"
                 >
-                  <span
+                  <slot 
                     v-if="!(fixedColumn.includes(j))"
-                    class="table-cell-content"
-                    :class="{'fill-width': i !== 0}"
-                    :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(tableRow.index, j) }"
-                    :contenteditable="isEditable(tableRow.index, j)"
-                    :id="tableCell.key"
-                    @blur="onCellBlur(tableCell, tableRow.index, j)"
-                    @keydown.enter.stop.prevent="onCellKeyEnter"
+                    :name="'column-' + j" 
+                    v-bind:props="{ cellData: tableCell.data, rowData: tableRow.cells, row: tableRow.index, column: j }"
                   >
-                    {{ tableCell.data }}
-                  </span>
+                    <span
+                      v-if="!(fixedColumn.includes(j))"
+                      class="table-cell-content"
+                      :class="{'fill-width': i !== 0}"
+                      :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(tableRow.index, j) }"
+                      :contenteditable="isEditable(tableRow.index, j)"
+                      :id="tableCell.key"
+                      @blur="onCellBlur(tableCell, tableRow.index, j)"
+                      @keydown.enter.stop.prevent="onCellKeyEnter"
+                    >
+                      {{ tableCell.data }}
+                    </span>
+                  </slot>
                 </div>
               </div>
             </div>

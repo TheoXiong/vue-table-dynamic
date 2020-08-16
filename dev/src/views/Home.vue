@@ -21,6 +21,7 @@
         <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
         <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
         <vue-button class="aside-btns" size="mini" @click="toggleFixed">Toggle Fixed Column</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleSlot">Toggle Slot</vue-button>
         <div class="aside-line"></div>
         <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
         <vue-button class="aside-btns" size="mini" @click="toPage">To Random Page</vue-button>
@@ -46,6 +47,15 @@
           @download="onDownload"
           ref="table"
         >
+          <template v-if="useSlot" v-slot:column-2="{ props }">
+            <span class="cell--slot-1">Slot::{{props.cellData}}--{{props.row}}--{{props.column}}</span>
+          </template>
+          <template v-if="useSlot"  v-slot:column-3="{ props }">
+            <span class="cell--slot-2">
+              <vue-button class="aside-btns aside-btns-slot" size="mini" @click.stop="testSlot(props)">Test Slot1</vue-button>
+              <vue-button class="aside-btns" type="text" size="mini" @click.stop="testSlot(props)">Test Slot2</vue-button>
+            </span>
+          </template>
         </vue-table-dynamic>
       </vuescroll>
     </section>
@@ -130,7 +140,8 @@ export default {
       },
       widthIncrement: 1,
       heightIncrement: 1,
-      rowHeightIncrement: 1
+      rowHeightIncrement: 1,
+      useSlot: false
     }
   },
   methods: {
@@ -255,6 +266,9 @@ export default {
         this.params.fixed = 1
       }
     },
+    toggleSlot () {
+      this.useSlot = !this.useSlot
+    },
     togglePagination () {
       this.params.pagination = !this.params.pagination
     },
@@ -339,6 +353,9 @@ export default {
       let blob = new Blob([output], {type: "application/octet-stream"})
       saveAs(blob, "table")
     },
+    testSlot (slotData) {
+      console.log('testSlot ', slotData)
+    },
     // 消息弹框 type：success/info/warning/error
     showMsg (type, info) {
       if (this.$refs && this.$refs.vueMsg && typeof this.$refs.vueMsg.showMsg === 'function') {
@@ -398,9 +415,18 @@ export default {
   }
 }
 
+.aside-btns-slot{
+  margin-right: 10px;
+}
 </style>
 <style>
-.v-show-border{
-  border: 1px solid blue;
+.cell--slot-1, .cell--slot-2{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+
 </style>
