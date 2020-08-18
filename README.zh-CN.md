@@ -18,6 +18,7 @@
 - [配置表头](#配置表头)
 - [固定表头](#固定表头)
 - [固定列](#固定列)
+- [作用域插槽](#作用域插槽)
 
 ## Demo
 [https://theoxiong.github.io/vue-table-dynamic/](https://theoxiong.github.io/vue-table-dynamic/) 
@@ -749,6 +750,44 @@ export default {
 </script>
 ```
 
+### 作用域插槽
+
+通过作用域插槽，可自定义cell内容
+具名插槽的名称为 `column-n`， n为列索引
+
+```
+<template>
+  <div class="base-demo" style="width: 400px">
+    <vue-table-dynamic :params="params">
+      <template v-slot:column-1="{ props }">
+        <span>Slot::{{props.cellData}}--{{props.row}}--{{props.column}}</span>
+      </template>
+    </vue-table-dynamic>
+  </div>
+</template>
+
+<script>
+import VueTableDynamic from 'vue-table-dynamic'
+
+export default {
+  name: 'Demo',
+  data() {
+    return {
+      params: {
+        data: [
+          ['Cell-1', 'Cell-2', 'Cell-3'],
+          ['Cell-4', 'Cell-5', 'Cell-6'],
+          ['Cell-7', 'Cell-8', 'Cell-9']
+        ]
+      }
+    }
+  },
+  components: { VueTableDynamic }
+}
+
+</script>
+```
+
 ## API
 
 ### 属性
@@ -782,6 +821,7 @@ export default {
 | `pagination` | 使用分页   | `boolean`  | `true`/`false` | `false`   |
 | `pageSize`  | 每页行数 | `number`   | -   | `10` |
 | `pageSizes` | 每页行数的可选项 | `Array<number>`  | - | |
+| `showTotal` | 显示分页总数   | `boolean`  | `true`/`false` | `false`   |
 | `scrollbar` | 滚动条的显示时机 | `string`  | `show/hover/hidden` | `show` |
 
 ### 方法

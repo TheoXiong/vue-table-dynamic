@@ -18,6 +18,7 @@ English | [简体中文](./README.zh-CN.md)
 - Configure Header
 - Fixed Header
 - Fixed Columns
+- Slot
 
 ## Demo
 [https://theoxiong.github.io/vue-table-dynamic/](https://theoxiong.github.io/vue-table-dynamic/) 
@@ -755,6 +756,45 @@ export default {
 </script>
 ```
 
+
+### Slot
+
+Customize cell content by slot
+The slot name should be `column-n`， `n` is the index of column 
+
+```
+<template>
+  <div class="base-demo" style="width: 400px">
+    <vue-table-dynamic :params="params">
+      <template v-slot:column-1="{ props }">
+        <span>Slot::{{props.cellData}}--{{props.row}}--{{props.column}}</span>
+      </template>
+    </vue-table-dynamic>
+  </div>
+</template>
+
+<script>
+import VueTableDynamic from 'vue-table-dynamic'
+
+export default {
+  name: 'Demo',
+  data() {
+    return {
+      params: {
+        data: [
+          ['Cell-1', 'Cell-2', 'Cell-3'],
+          ['Cell-4', 'Cell-5', 'Cell-6'],
+          ['Cell-7', 'Cell-8', 'Cell-9']
+        ]
+      }
+    }
+  },
+  components: { VueTableDynamic }
+}
+
+</script>
+```
+
 ## API
 
 ### Attributes
@@ -789,6 +829,7 @@ export default {
 | `pagination` | table with pagination | `boolean`  | `true`/`false` | `false`   |
 | `pageSize`  | row count of each page | `number`   | -   | `10` |
 | `pageSizes` | options of row count per page | `Array<number>`  | - | `[10, 20, 50, 100]`|
+| `showTotal` | show total count of  pagination  | `boolean`  | `true`/`false` | `false`   |
 | `scrollbar` | display of scroll bar | `string`  | `show/hover/hidden` | `show` |
 
 ### Methods
