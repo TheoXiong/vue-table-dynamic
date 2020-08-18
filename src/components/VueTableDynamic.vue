@@ -29,7 +29,7 @@
               height: headerHeight + 'px', 
               minWidth: getRowMinWidth(),
               marginLeft: this.headerLeft * -1 +'px',
-              backgroundColor: headerBgColor
+              backgroundColor: headerBgColor || (tableData.rows[0].hovering && rowHoverColor) || ''
             }"
             @mouseenter="onMouseenter(tableData.rows[0])" 
             @mouseleave="onMouseleave(tableData.rows[0])"
@@ -128,7 +128,7 @@
                   'v-show-border': tableBorder,
                   'is-hovering': tableRow.hovering
                 }"
-                :style="{ height: rowHeight + 'px', minWidth: getRowMinWidth() }"
+                :style="{ height: rowHeight + 'px', minWidth: getRowMinWidth(), backgroundColor: tableRow.hovering ? rowHoverColor : '' }"
                 @mouseenter="onMouseenter(tableRow)" 
                 @mouseleave="onMouseleave(tableRow)"
                 @click="onClickRow(tableRow, tableRow.index)"
@@ -191,7 +191,7 @@
             :style="{ 
               height: headerHeight + 'px',
               minWidth: getRowMinWidth(),
-              backgroundColor: headerBgColor
+              backgroundColor: headerBgColor || (tableData.rows[0].hovering && rowHoverColor) || ''
             }"
             @mouseenter="onMouseenter(tableData.rows[0])" 
             @mouseleave="onMouseleave(tableData.rows[0])"
@@ -280,7 +280,7 @@
                     'v-show-border': tableBorder,
                     'is-hovering': tableRow.hovering
                   }"
-                  :style="{ height: rowHeight + 'px' }"
+                  :style="{ height: rowHeight + 'px', backgroundColor: tableRow.hovering ? rowHoverColor : '' }"
                   @mouseenter="onMouseenter(tableRow, true)" 
                   @mouseleave="onMouseleave(tableRow, true)"
                   @click="onClickRow(tableRow, tableRow.index)"
@@ -308,18 +308,24 @@
                     @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j)"
                     @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, tableRow.index, j)"
                   >
-                    <span
+                    <slot 
                       v-if="fixedColumn.includes(j)"
-                      class="table-cell-content"
-                      :class="{'fill-width': i !== 0}"
-                      :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(tableRow.index, j) }"
-                      :contenteditable="isEditable(tableRow.index, j)"
-                      :id="tableCell.key"
-                      @blur="onCellBlur(tableCell, tableRow.index, j)"
-                      @keydown.enter.stop.prevent="onCellKeyEnter"
+                      :name="'column-' + j" 
+                      v-bind:props="{ cellData: tableCell.data, rowData: tableRow.cells, row: tableRow.index, column: j }"
                     >
-                      {{ tableCell.data }}
-                    </span>
+                      <span
+                        v-if="fixedColumn.includes(j)"
+                        class="table-cell-content"
+                        :class="{'fill-width': i !== 0}"
+                        :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(tableRow.index, j) }"
+                        :contenteditable="isEditable(tableRow.index, j)"
+                        :id="tableCell.key"
+                        @blur="onCellBlur(tableCell, tableRow.index, j)"
+                        @keydown.enter.stop.prevent="onCellKeyEnter"
+                      >
+                        {{ tableCell.data }}
+                      </span>
+                    </slot>
                   </div>
                 </div>
               </div>
@@ -459,6 +465,12 @@ export default {
     headerBgColor () {
       if (this.params && this.params.headerBgColor && typeof this.params.headerBgColor === 'string') {
         return this.params.headerBgColor
+      }
+      return ''
+    },
+    rowHoverColor () {
+      if (this.params && this.params.rowHoverColor && typeof this.params.rowHoverColor === 'string') {
+        return this.params.rowHoverColor
       }
       return ''
     },

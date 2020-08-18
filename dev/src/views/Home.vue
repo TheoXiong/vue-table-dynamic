@@ -47,7 +47,7 @@
           @download="onDownload"
           ref="table"
         >
-          <template v-if="useSlot" v-slot:column-2="{ props }">
+          <template v-if="useSlot" v-slot:column-0="{ props }">
             <span class="cell--slot-1">Slot::{{props.cellData}}--{{props.row}}--{{props.column}}</span>
           </template>
           <template v-if="useSlot"  v-slot:column-3="{ props }">
@@ -95,7 +95,7 @@ const defaultTableParams = {
   enableSearch: true,
   // activedColor: '#046FDB',
   headerBgColor: '#efefef',
-  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }],
+  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }, {column: 3,  width: 200},],
   fixed: 1,
   sort: [0, { 
     column: 1, 
