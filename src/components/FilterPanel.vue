@@ -25,8 +25,8 @@
           </div>
         </div>
         <div class="filter-footer flex-c-b">
-          <span class="filter-btns do-filter" @click="doFilter" :class="{ 'is-diabled': !filterable }">Filter</span>
           <span class="filter-btns" @click="doReset">Reset</span>
+          <span class="filter-btns do-filter" @click="doFilter" :class="{ 'is-diabled': !filterable }">Confirm</span>
         </div>
       </div>
     </transition>
