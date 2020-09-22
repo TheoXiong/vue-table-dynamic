@@ -93,7 +93,8 @@
                   :style="{ height: headerHeight + 'px' }" 
                 >
                   <filter-panel 
-                    :content="filterConfig[j].content" 
+                    :content="filterConfig[j].content"
+                    :lang="lang"
                     @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
                     @reset="clearFilter(j)"
                   >
@@ -256,6 +257,7 @@
                 >
                   <filter-panel 
                     :content="filterConfig[j].content" 
+                    :lang="lang"
                     @filter="(checked) => { onFilter(j, checked, filterConfig[j]) }"
                     @reset="clearFilter(j)"
                   >
@@ -358,6 +360,7 @@
           :total="totalPages" 
           :show-total="showTotal"
           :disabled="!pagination"
+          :lang="lang"
           @current-page="onPageChange"
           @size="onPageSizeChange"
           ref="tablePagination"
@@ -645,6 +648,12 @@ export default {
         return this.params.scrollbar
       }
       return 'show'
+    },
+    lang () {
+      if (this.params && ['en_US', 'zh_CN'].includes(this.params.language)) {
+        return this.params.language
+      }
+      return 'en_US'
     }
   },
   watch: {

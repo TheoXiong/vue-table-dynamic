@@ -1,7 +1,7 @@
 <template>
   <div class="vue-pagination flex-c-e" v-if="!disabled">
     <div v-if="showTotal && total >= 0" class="pagination-total">
-      Total {{total}}
+      {{ lang === 'en_US' ? 'Total' : '总数' }} {{total}}
     </div>
     <div 
       v-if="pageSizes && pageSizes.length > 0" 
@@ -9,7 +9,7 @@
       @click="showPageSizeOptions = !showPageSizeOptions"
       ref="pSize"
     >
-      <span class="size-text">{{ size }}/page</span>
+      <span class="size-text">{{ size }}/{{ lang === 'en_US' ? 'page' : '页' }}</span>
       <!-- <span class="size-icon">
         <i class="iconfont iconup"></i>
       </span> -->
@@ -21,7 +21,7 @@
             class="size-item flex-c"
             @click.stop="onSelect(index)"
           >
-            {{ item }}/page
+            {{ item }}/{{ lang === 'en_US' ? 'page' : '页' }}
           </div>
         </div>
       </transition>
@@ -80,7 +80,8 @@ export default {
     pageSize: Number,
     pageSizes: { type: Array, default: () => [10, 20, 50, 100]},
     disabled: { type: Boolean, default: false },
-    showTotal: { type: Boolean, default: false }
+    showTotal: { type: Boolean, default: false },
+    lang: { type: String, default: 'en_US' }
   },
   computed: {
     disableForward () {

@@ -25,8 +25,10 @@
           </div>
         </div>
         <div class="filter-footer flex-c-b">
-          <span class="filter-btns" @click="doReset">Reset</span>
-          <span class="filter-btns do-filter" @click="doFilter" :class="{ 'is-diabled': !filterable }">Confirm</span>
+          <span class="filter-btns" @click="doReset">{{ lang === 'en_US' ? 'Reset' : '重置' }}</span>
+          <span class="filter-btns do-filter" @click="doFilter" :class="{ 'is-diabled': !filterable }">
+            {{ lang === 'en_US' ? 'Confirm' : '确定' }}
+          </span>
         </div>
       </div>
     </transition>
@@ -55,7 +57,8 @@ export default {
   },
   props: {
     disabled: { type: Boolean,default: false },
-    content: { type: Array, default: () => [] }
+    content: { type: Array, default: () => [] },
+    lang: { type: String, default: 'en_US' }
   },
   watch: {
     disabled (value) {
@@ -188,6 +191,7 @@ $fontFamily: Arial, Helvetica, sans-serif;
       margin-left: 6px;
       color: $textColor;
       font-size: 12px;
+      line-height: 12px;
       font-weight: 500;
       overflow: hidden;
       word-wrap: normal;

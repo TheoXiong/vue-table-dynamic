@@ -25,6 +25,7 @@
         <div class="aside-line"></div>
         <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
         <vue-button class="aside-btns" size="mini" @click="toPage">To Random Page</vue-button>
+        <vue-button class="aside-btns" size="mini" @click="toggleLanguage">Toggle language</vue-button>
         <div class="aside-line"></div>
         <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
         <vue-button class="aside-btns" size="mini" @click="changeHeaderHeight">Change Header Height</vue-button>
@@ -121,6 +122,7 @@ const defaultTableParams = {
   // showTotal: true,
   // pageSize: 20,
   // pageSizes: [5, 15, 30, 50, 100],
+  language: ''
 }
 
 for (let i = 0; i < 200; i++) {
@@ -276,6 +278,15 @@ export default {
       if (this.$refs && this.$refs.table) {
         let target = Math.floor(Math.random() * 5 + 1)
         this.$refs.table.toPage(target)
+      }
+    },
+    toggleLanguage () {
+      if (!this.params.language) return this.params.language = 'zh_CN'
+
+      if (this.params.language === 'zh_CN') {
+        this.params.language = 'en_US'
+      } else {
+        this.params.language = 'zh_CN'
       }
     },
     changeColumnWidth () {
