@@ -1,11 +1,11 @@
 <template>
-  <div class="v-table-dynamic">
+  <div class="v-table-dynamic" :class="{'is-fit-height': fitToHeight}" ref="tableWrapper">
     <div 
       v-if="tableData && tableData.rows && tableData.rows.length > 0"
       :style="{ minWidth: minWidth + 'px', maxWidth: maxWidth + 'px' }"
     >
       <!-- Table Tools -->
-      <div class="v-table-tools flex-c-s" v-if="enableTools">
+      <div class="v-table-tools flex-c-s" v-if="enableTools" ref="tableTool">
         <vue-input v-if="enableSearch" class="tools-search" v-model="searchValue" placeholder="Search">
           <i class="iconfont iconsearch" slot="prefix"></i>
         </vue-input>
@@ -20,7 +20,7 @@
         @mouseleave="onMouseleaveTable"
       >
         <!-- Table Header -->
-        <div class="v-table-header-wrap">
+        <div class="v-table-header-wrap" ref="tableHeader">
           <div 
             v-if="headerInfirstRow" 
             class="v-table-row flex-c is-header"
@@ -108,12 +108,14 @@
           </div>
         </div>
         <!-- Table Body -->
-        <div class="v-table-body" :style="{ height: height }">
+        <div class="v-table-body" :style="{ height: bodyHeight }">
           <vue-scrollbar
             x-bar-display="hidden"
             :y-bar-display="scrollbarDisplay"
-            :size="7"
-            :border-radius="0"
+            :size="scrollbarSize"
+            :scrollbarColor="scrollbarColor"
+            :scrollbarHoverColor="scrollbarHoverColor"
+            :border-radius="scrollbarBorderRadius"
             :step="scrollStep"
             @scroll-x="onScrollX"
             @scroll-y="onScrollY"
@@ -272,7 +274,7 @@
             </div>
           </div>
           <!-- Fixed Body -->
-          <div class="v-table-body v-table-body-fixed" :style="{ height: height }" ref="fixedBody">
+          <div class="v-table-body v-table-body-fixed" :style="{ height: bodyHeight }" ref="fixedBody">
             <div class="v-table-body-inner" :style="{ marginTop: fixedTop * -1 + 'px' }" @wheel="onFixedScroll" ref="fixedBodyInner">
               <div v-for="(tableRow, i) in tableData.activatedRows" :key="i" :style="{ minWidth: getRowMinWidth() }"> 
                 <div
@@ -343,8 +345,10 @@
           <horizontal-scrollbar
             v-if="bodyWidth && bodyViewerWidth"
             :x-bar-display="scrollbarDisplay"
-            :size="7"
-            :border-radius="0"
+            :color="scrollbarColor"
+            :hoverColor="scrollbarHoverColor"
+            :size="scrollbarSize"
+            :border-radius="scrollbarBorderRadius"
             :viewer-width="bodyViewerWidth"
             :wrapper-width="bodyWidth"
             :scrolling="hMovement"
@@ -355,7 +359,7 @@
         </div>
       </div>
       <!-- Table Pagination -->
-      <div class="table-pagination" v-if="pagination">
+      <div class="table-pagination" v-if="pagination" ref="paginationWrapper">
         <vue-pagination
           :page-size="pageSize"
           :page-sizes="pageSizes"
@@ -410,7 +414,8 @@ export default {
       fixedTop: 0,
       bodyWidth: null,
       bodyViewerWidth: null,
-      hMovement: 0
+      hMovement: 0,
+      bodyHeight: 'auto'
     }
   },
   props: {
@@ -545,6 +550,9 @@ export default {
       }
       return 'auto'
     },
+    fitToHeight () {
+      return !!(this.params && this.params.fitToHeight)
+    },
     columnWidth () {
       if (this.params && unemptyArray(this.params.columnWidth)) {
         let obj = {}
@@ -651,6 +659,30 @@ export default {
       }
       return 'show'
     },
+    scrollbarSize () {
+      if (this.params && typeof this.params.scrollbarSize === 'number' && this.params.scrollbarSize >= 0) {
+        return this.params.scrollbarSize
+      }
+      return 6
+    },
+    scrollbarBorderRadius () {
+      if (this.params && typeof this.params.scrollbarBorderRadius === 'number' && this.params.scrollbarBorderRadius >= 0) {
+        return this.params.scrollbarBorderRadius
+      }
+      return 0
+    },
+    scrollbarColor () {
+      if (this.params && this.params.scrollbarColor) {
+        return this.params.scrollbarColor
+      }
+      return '#DFDFDF'
+    },
+    scrollbarHoverColor () {
+      if (this.params && this.params.scrollbarHoverColor) {
+        return this.params.scrollbarHoverColor
+      }
+      return '#DFDFDF'
+    },
     lang () {
       if (this.params && ['en_US', 'zh_CN'].includes(this.params.language)) {
         return this.params.language
@@ -664,6 +696,7 @@ export default {
         this.searchValue = ''
         this.activatedSort = {}
         this.activatedFilter = {}
+        setTimeout(() => { this.updateBodyHeight() }, 20)
       },
       deep: true,
       immediate: true
@@ -738,6 +771,8 @@ export default {
           this.tableData.activatedRows = this.tableData.rows
         }
       }
+
+      setTimeout(() => { this.updateBodyHeight() }, 50)
     },
     updateActivatedRows () {
       if (!(this.tableData && this.tableData.rows && this.tableData.rows.length > 0)) return
@@ -788,6 +823,7 @@ export default {
     onPageSizeChange (size) {
       if (!this.pagination) return
       this.pageSize = size
+      setTimeout(() => { this.updateBodyHeight() }, 20)
     },
     /**
    * @function 跳转到目标页
@@ -799,6 +835,40 @@ export default {
 
       if (this.$refs && this.$refs.tablePagination) {
         this.$refs.tablePagination.toPage(tagetPage)
+      }
+    },
+    /**
+     * @function 获取表格主体部分的高度
+     *           1. 如果设置了params.height, 则使用params.height
+     *           2. 如果没有设置params.height，则通过
+     */
+    updateBodyHeight () {
+      if (this.height && /\d+px/.test(this.height)) {
+        this.bodyHeight = this.height
+      } else if (this.fitToHeight) {
+        const getReferHeight = (name) => {
+          if (this.$refs && this.$refs[name] && typeof this.$refs[name].offsetHeight === 'number') {
+            return this.$refs[name].offsetHeight
+          }
+          return 0
+        }
+
+        const tableWrapperHeight = getReferHeight('tableWrapper')
+        const tableToolHeight = getReferHeight('tableTool')
+        const tableHeaderHeight = getReferHeight('tableHeader')
+        const paginationWrapperHeight = getReferHeight('paginationWrapper')
+
+        let _height = tableWrapperHeight - tableToolHeight - tableHeaderHeight - paginationWrapperHeight
+        this.bodyHeight = (_height > 0) ? `${_height}px` : 'auto'
+      } else if (this.$refs && this.$refs.scrollbar) {
+        const size = this.$refs.scrollbar.getSize()
+        if (size && typeof size.viewerHeight === 'number') {
+          this.bodyHeight = size.viewerHeight + 'px'
+        } else {
+          this.bodyHeight = 'auto'
+        }
+      } else {
+        this.bodyHeight = 'auto'
       }
     },
     /**
@@ -1604,6 +1674,9 @@ $fontFamily: Arial, Helvetica, sans-serif;
   color: $textColor;
   padding-bottom: 10px;
   overflow: hidden;
+}
+.v-table-dynamic.is-fit-height{
+  height: 100%;
 }
 .v-table{
   position: relative;

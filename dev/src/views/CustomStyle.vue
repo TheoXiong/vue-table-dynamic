@@ -1,61 +1,58 @@
 <template>
   <div class="content-custom">
     <aside>
-      <vuescroll :ops="scrollBarOpts" ref="vuescroll">
-        <vue-button class="aside-btns" size="mini" @click="addRow">Add Row</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="deleteRow">Delete Row</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="addColumn">Add Column</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="deleteColumn">Delete Column</vue-button>
-        <div class="aside-line"></div>
-        <vue-button class="aside-btns" size="mini" @click="fixedHeader">Fixed Header</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleHeader">Toggle Header</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleBorder">Toggle Border</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleStripe">Toggle Stripe</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleHighlight">Toggle Highlight</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleSelect">Toggle Select</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleSearch">Toggle Search</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleFilter">Toggle Filter</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleFixed">Toggle Fixed Column</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleSlot">Toggle Slot</vue-button>
-        <div class="aside-line"></div>
-        <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toPage">To Random Page</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="toggleLanguage">Toggle language</vue-button>
-        <div class="aside-line"></div>
-        <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="changeHeaderHeight">Change Header Height</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="changeRowHeight">Change Row Height</vue-button>
-        <div class="aside-line"></div>
-        <vue-button class="aside-btns" size="mini" @click="getData">Get Data</vue-button>
-        <vue-button class="aside-btns" size="mini" @click="getCheckedRowDatas">Checked Row Data</vue-button>
-      </vuescroll>
+      <vue-button class="aside-btns" size="mini" @click="addRow">Add Row</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="deleteRow">Delete Row</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="addColumn">Add Column</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="deleteColumn">Delete Column</vue-button>
+      <div class="aside-line"></div>
+      <vue-button class="aside-btns" size="mini" @click="fitToHeight">Fit To Height</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="fixedHeader">Fixed Header</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleHeader">Toggle Header</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleBorder">Toggle Border</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleStripe">Toggle Stripe</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleHighlight">Toggle Highlight</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleSelect">Toggle Select</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleSearch">Toggle Search</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleFilter">Toggle Filter</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleSort">Toggle Sort</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleEdit">Toggle Edit</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleFixed">Toggle Fixed Column</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleSlot">Toggle Slot</vue-button>
+      <div class="aside-line"></div>
+      <vue-button class="aside-btns" size="mini" @click="togglePagination">Toggle Pagination</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toPage">To Random Page</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="toggleLanguage">Toggle language</vue-button>
+      <div class="aside-line"></div>
+      <vue-button class="aside-btns" size="mini" @click="changeColumnWidth">Change Column Width</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="changeHeaderHeight">Change Header Height</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="changeRowHeight">Change Row Height</vue-button>
+      <div class="aside-line"></div>
+      <vue-button class="aside-btns" size="mini" @click="getData">Get Data</vue-button>
+      <vue-button class="aside-btns" size="mini" @click="getCheckedRowDatas">Checked Row Data</vue-button>
     </aside>
     <section>
-      <vuescroll :ops="scrollBarOpts" ref="vuescroll">
-        <vue-table-dynamic 
-          :params="params"
-          @select="onSelect"
-          @select-all="onSelectAll"
-          @selection-change="onSelectionChange"
-          @row-click="onRowClick"
-          @cell-click="onCellClick"
-          @cell-contextmenu="onCellContextmenu"
-          @download="onDownload"
-          ref="table"
-        >
-          <template v-if="useSlot" v-slot:column-0="{ props }">
-            <span class="cell--slot-1">Slot::{{props.cellData}}--{{props.row}}--{{props.column}}</span>
-          </template>
-          <template v-if="useSlot"  v-slot:column-3="{ props }">
-            <span class="cell--slot-2">
-              <vue-button class="aside-btns aside-btns-slot" size="mini" @click.stop="testSlot(props)">Test Slot1</vue-button>
-              <vue-button class="aside-btns" type="text" size="mini" @click.stop="testSlot(props)">Test Slot2</vue-button>
-            </span>
-          </template>
-        </vue-table-dynamic>
-      </vuescroll>
+      <vue-table-dynamic 
+        :params="params"
+        @select="onSelect"
+        @select-all="onSelectAll"
+        @selection-change="onSelectionChange"
+        @row-click="onRowClick"
+        @cell-click="onCellClick"
+        @cell-contextmenu="onCellContextmenu"
+        @download="onDownload"
+        ref="table"
+      >
+        <template v-if="useSlot" v-slot:column-0="{ props }">
+          <span class="cell--slot-1">Slot::{{props.cellData}}--{{props.row}}--{{props.column}}</span>
+        </template>
+        <template v-if="useSlot"  v-slot:column-3="{ props }">
+          <span class="cell--slot-2">
+            <vue-button class="aside-btns aside-btns-slot" size="mini" @click.stop="testSlot(props)">Test Slot1</vue-button>
+            <vue-button class="aside-btns" type="text" size="mini" @click.stop="testSlot(props)">Test Slot2</vue-button>
+          </span>
+        </template>
+      </vue-table-dynamic>
     </section>
     <vue-msg :timeout="2000" :top="100" :right="20" ref="vueMsg"></vue-msg>
   </div>
@@ -64,7 +61,6 @@
 <script>
 import VueButton from './VueButton.vue'
 import VueMsg from 'vue-msgs'
-import vuescroll from 'vuescroll'
 import { saveAs } from 'file-saver'
 import { table, getBorderCharacters } from 'table'
 const cloneDeep = require('lodash.clonedeep')
@@ -81,6 +77,7 @@ const defaultTableParams = {
   ],
   header: 'row',
   height: '',
+  fitToHeight: false,
   headerHeight: 48,
   rowHeight: 36,
   // wordWrap: 'break-word',
@@ -112,6 +109,10 @@ const defaultTableParams = {
   pagination: true,
   showTotal: true,
   pageSize: 20,
+  scrollbarBorderRadius: 4,
+  scrollbar: 'hover',
+  scrollbarColor: 'rgba(0, 0, 0, 0.45)',
+  scrollbarHoverColor: 'rgba(0, 0, 0, 0.65)',
   language: ''
 }
 
@@ -126,10 +127,6 @@ export default {
   data() {
     return {
       params: cloneDeep(defaultTableParams),
-      scrollBarOpts: {
-        scrollPanel: { scrollingX: false },
-        bar: { background: '#DFDFDF', opacity: 0.8 }
-      },
       widthIncrement: 1,
       heightIncrement: 1,
       rowHeightIncrement: 1,
@@ -191,6 +188,9 @@ export default {
       if (curr < 0 || curr === (tableHeaderTypes.length - 1)) return this.params.header = tableHeaderTypes[0]
 
       this.params.header = tableHeaderTypes[curr + 1]
+    },
+    fitToHeight () {
+      this.params.fitToHeight = !(this.params.fitToHeight)
     },
     fixedHeader () {
       if (this.params.height) {
@@ -364,7 +364,7 @@ export default {
       }
     }
   },
-  components: { VueButton, VueMsg, vuescroll }
+  components: { VueButton, VueMsg }
 }
 </script>
 
@@ -382,6 +382,7 @@ export default {
     padding: 30px;
     background-color: rgb(33,37,43);
     border-right: 1px solid rgb(33,37,43);
+    overflow-y: auto;
     .aside-btns{
       display: block;
       width: 100%;
@@ -403,6 +404,7 @@ export default {
     left: 200px;
     right: 0;
     padding: 20px 25px;
+    overflow-y: auto;
   }
   .downloader{
     height: 0;
@@ -413,6 +415,44 @@ export default {
 
 .aside-btns-slot{
   margin-right: 10px;
+}
+
+$scrollbar-size: 6px;
+*::-webkit-scrollbar {
+  width: 2px;
+  opacity: 0.1;
+  cursor: pointer;
+}
+*::-webkit-scrollbar:horizontal {
+  height: $scrollbar-size;
+  cursor: pointer;
+}
+*::-webkit-scrollbar:vertical {
+  width: $scrollbar-size;
+  cursor: pointer;
+}
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+  opacity: 0.3;
+}
+*{
+  &:hover::-webkit-scrollbar-thumb{
+    visibility: visible;
+  }
+}
+*::-webkit-scrollbar-thumb {
+  opacity: 0.1;
+  background-color: rgba(0, 0, 0, .45);
+  border-radius: $scrollbar-size;
+  visibility: hidden;
+  cursor: -webkit-grab;
+  cursor: pointer;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.65);
+}
+*::-webkit-scrollbar-thumb:active {
+    background-color: rgba(0, 0, 0, 0.65);
 }
 </style>
 
@@ -427,7 +467,7 @@ export default {
 
 
 // $g_table_header_bg: rgba(89, 126, 247, 0.15);
-$g_table_header_bg: rgba(229, 235, 253, 1);
+$g_table_header_bg: #E0E7FE;
 $g_table_header_border_color: #FFFFFF;
 $g_table_header_height: 30px;
 $g_table_row_bg: #F5F5FB;
@@ -448,28 +488,28 @@ $g_table_color: rgba(0,0,0,0.65);
     color: $g_table_color !important;
     cursor: auto;
     border-top: none !important;
-    border-left: 1px solid $g_table_row_bg !important;
+    border-right: 1px solid $g_table_row_bg !important;
     border-bottom: 1px solid $g_table_row_bg !important;
     background: $g_table_row_bg2 !important;
-    .table-cell{
-      border-right: 1px solid $g_table_row_bg !important;
+    .table-cell, .table-check{
+      border-left: 1px solid $g_table_row_bg !important;
     }
   }
   .v-table-row.is-odd{
     background: $g_table_row_bg !important;
-    border-left: 1px solid $g_table_row_bg2 !important;
+    border-right: 1px solid $g_table_row_bg2 !important;
     border-bottom: 1px solid $g_table_row_bg2 !important;
-    .table-cell{
-      border-right: 1px solid $g_table_row_bg2 !important;
+    .table-cell, .table-check{
+      border-left: 1px solid $g_table_row_bg2 !important;
     }
   }
   .v-table-row.is-header{
     background: $g_table_header_bg !important;
     border-top: 1px solid $g_table_header_border_color !important;
-    border-left: 1px solid $g_table_header_border_color !important;
+    border-right: 1px solid $g_table_header_border_color !important;
     border-bottom: 1px solid $g_table_header_border_color !important;
-    .table-cell{
-      border-right: 1px solid $g_table_header_border_color !important;
+    .table-cell, .table-check{
+      border-left: 1px solid $g_table_header_border_color !important;
     }
   }
 }

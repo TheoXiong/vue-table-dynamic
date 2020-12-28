@@ -16,11 +16,13 @@
         :style="{
           width: this.width+'%',
           left: this.scrolling + '%',
-          backgroundColor: color,
+          backgroundColor: hovering ? hoverColor : color,
           height: scrollbarSize + 'px',
           borderRadius: scrollbarBorderRadius + 'px'
         }"
         @mousedown="startDrag"
+        @mouseenter="hovering = true"
+        @mouseleave="hovering = false"
         ref="scrollbar"
       >
       </div>
@@ -38,6 +40,7 @@ export default {
     return {
       width: 0,
       opacity: 0,
+      hovering: false,
       dragging: false,
       start: 0
     }
@@ -47,6 +50,7 @@ export default {
     wrapperWidth: Number, // 包装层（可视区）宽度
     viewerWidth: Number, // 视图宽度
     color: { type: String, default: '#DFDFDF' },
+    hoverColor: { type: String, default: '#DFDFDF' },
     xBarDisplay: { type: String, default: 'hover' },
     size: { type: Number, default: 6 },
     borderRadius: { type: Number, default: 4 },
@@ -179,6 +183,7 @@ export default {
   width: 100%;
   left: 0;
   background: transparent;
+  z-index: 9999;
 }
 .vue-scrollbar-horizontal .scrollbar-inner{
   position: relative;

@@ -1,6 +1,6 @@
 {
   "name": "vue-table-dynamic",
-  "version": "0.3.3",
+  "version": "0.4.1",
   "description": "A vue component of dynamic table",
   "main": "dist/index.min.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "dependencies": {
     "lodash.throttle": "^4.1.1",
     "lodash.trim": "^4.5.1",
-    "vue-scrollbar-simple": "0.0.3"
+    "vue-scrollbar-simple": "0.0.9"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -55,7 +55,6 @@
     "vue-msgs": "^1.0.6",
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "^2.5.16",
-    "vuescroll": "^4.14.4",
     "webpack": "^4.29.4",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4",
