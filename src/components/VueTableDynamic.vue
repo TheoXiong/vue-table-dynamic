@@ -127,7 +127,8 @@
                 :class="{ 
                   'is-striped': (rowStripe && i % 2 === 0), 
                   'v-show-border': tableBorder,
-                  'is-hovering': tableRow.hovering
+                  'is-hovering': tableRow.hovering,
+                  'is-odd': i % 2 === 1 
                 }"
                 :style="{ height: rowHeight + 'px', minWidth: getRowMinWidth(), backgroundColor: tableRow.hovering ? rowHoverColor : '' }"
                 @mouseenter="onMouseenter(tableRow)" 
@@ -280,7 +281,8 @@
                   :class="{ 
                     'is-striped': (rowStripe && i % 2 === 0), 
                     'v-show-border': tableBorder,
-                    'is-hovering': tableRow.hovering
+                    'is-hovering': tableRow.hovering,
+                    'is-odd': i % 2 === 1 
                   }"
                   :style="{ height: rowHeight + 'px', backgroundColor: tableRow.hovering ? rowHoverColor : '' }"
                   @mouseenter="onMouseenter(tableRow, true)" 

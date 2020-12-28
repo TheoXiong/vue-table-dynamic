@@ -5,12 +5,14 @@
       <span class="nav-logo-text">{{ logoText }}</span>
     </div>
     <div class="nav-content dev-flex-c">
-      <div class="nav-content-item"
-          v-for="item in menus"
-          :key="item.key"
-          @click="onClick(item)"
-        >
-          {{ item.name }}
+      <div class="nav-content-item dev-flex-c-c"
+        :class="{ 'is-active': activate === item.key }"
+        v-for="item in menus"
+        :key="item.key"
+        @click="onClick(item)"
+      >
+        {{ item.name }}
+        <div class="nav-content-item-line" v-show="activate === item.key"></div>
       </div>
     </div>
   </div>
@@ -26,15 +28,25 @@ export default {
       logoImg,
       logoText: 'Vue Table Dynamic',
       menus: [{
+        key: 'default',
+        name: 'Default Style',
+      }, {
+        key: 'custom',
+        name: 'Custom Style',
+      }, {
         key: 'github',
         name: 'GitHub',
-      }]
+      }],
+      activate: 'default'
     }
   },
   methods: {
     onClick (item) {
       if (item.key === 'github') {
         window.open('https://github.com/TheoXiong/vue-table-dynamic', '_blank')
+      } else {
+        this.activate = item.key
+        this.$emit('nav', item.key)
       }
     }
   }
@@ -71,6 +83,9 @@ export default {
 }
 
 .nav-content-item{
+  box-sizing: border-box;
+  position: relative;
+  height: 40px;
   margin: 0 12px;
   font-size: 14px;
   letter-spacing: 1px;
@@ -79,6 +94,17 @@ export default {
 }
 .nav-content-item:hover{
   color: #E0D5D5;
+}
+// .nav-content-item.is-active, .nav-content-item.is-active:hover{
+//   color: #046FDB;
+// }
+.nav-content-item-line{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #FFFFFF;
 }
 
 </style>
