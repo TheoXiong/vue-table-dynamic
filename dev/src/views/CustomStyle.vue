@@ -77,7 +77,8 @@ const defaultTableParams = {
   ],
   header: 'row',
   height: '',
-  fitToHeight: false,
+  fitToHeight: true,
+  sharedWidth: true,
   headerHeight: 48,
   rowHeight: 36,
   // wordWrap: 'break-word',
@@ -87,7 +88,7 @@ const defaultTableParams = {
   stripe: false,
   showCheck: true,
   enableSearch: false,
-  columnWidth: [{column: 0, width: 120}, {column: 1, width: 150}, {column: 2, width: '30%' }, {column: 3,  width: 200},],
+  columnWidth: [{column: 0, width: 120}, {column: 1, width: 170}, {column: 2, width: 120 }, {column: 3,  width: 220} ],
   fixed: 1,
   sort: [0, { 
     column: 1, 
@@ -106,7 +107,7 @@ const defaultTableParams = {
     content: [{text: '1-Cell', value: '1-Cell'}, {text: '2-Cell', value: '2-Cell'}, {text: '3-Cell', value: '3-Cell'}], 
     method: (value, tableCell) => { return String(tableCell.data).toLocaleLowerCase().includes(String(value).toLocaleLowerCase()) }
   }],
-  pagination: true,
+  pagination: false,
   showTotal: true,
   pageSize: 20,
   scrollbarBorderRadius: 4,

@@ -374,6 +374,7 @@
         </vue-pagination>
       </div>
     </div>
+    <resize-detector @resize="onResize"></resize-detector>
   </div>
 </template>
 
@@ -386,9 +387,11 @@ import HorizontalScrollbar from './scrollbar/HorizontalScrollbar.vue'
 import VueInput from './VueInput.vue'
 import FilterPanel from './FilterPanel.vue'
 import VuePagination from './VuePagination.vue'
+import ResizeDetector from './ResizeDetector.vue'
 import '../assets/css/flex.css'
 import '../assets/iconfont/iconfont.css'
 const trim = require('lodash.trim')
+const throttle = require('lodash.throttle')
 
 const wordWrapList = ['normal', 'break-word']
 const whiteSpaceList = ['nowrap', 'normal', 'pre', 'pre-wrap', 'pre-line']
@@ -415,7 +418,8 @@ export default {
       bodyWidth: null,
       bodyViewerWidth: null,
       hMovement: 0,
-      bodyHeight: 'auto'
+      bodyHeight: 'auto',
+      sharedColumnWidth: []
     }
   },
   props: {
@@ -688,6 +692,9 @@ export default {
         return this.params.language
       }
       return 'en_US'
+    },
+    sharedWidth () {
+      return !!(this.params && this.params.sharedWidth)
     }
   },
   watch: {
@@ -723,31 +730,43 @@ export default {
         this.clearSearch()
       }
     },
+    pagination (value) {
+      setTimeout(() => {
+        this.initData(this.sourceData)
+      }, 20)
+    },
     pageSizeConfig: {
       handler (v) {
-        if (v > 0 && this.pageSize !== v && (this.params && this.params.pagination)) {
+        if (v > 0 && this.pageSize !== v) {
           this.pageSize = v
         }
       },
       immediate: true
     },
     showCheck (value) {
-      this.$nextTick(this.updateFixedColumn)
+      this.updateColumnWidth()
     },
     fixedConfig: {
       handler () {
-        this.$nextTick(this.updateFixedColumn)
+        this.updateColumnWidth()
       },
       immediate: true
     },
     columnWidth (value) {
-      this.$nextTick(this.updateFixedColumn)
+      this.updateColumnWidth()
     }
+  },
+  mounted () {
+    this.handleResize = throttle((e) => {
+      this.updateBodyHeight()
+      this.updateColumnWidth()
+    }, 200)
   },
   beforeDestroy () {
     this.tableData = {}
     this.activatedSort = {}
     this.activatedFilter = {}
+    this.handleResize = null
   },
   methods: {
     /**
@@ -772,7 +791,10 @@ export default {
         }
       }
 
-      setTimeout(() => { this.updateBodyHeight() }, 50)
+      setTimeout(() => { 
+        this.updateBodyHeight()
+        this.updateColumnWidth()
+      }, 50)
     },
     updateActivatedRows () {
       if (!(this.tableData && this.tableData.rows && this.tableData.rows.length > 0)) return
@@ -858,7 +880,9 @@ export default {
         const tableHeaderHeight = getReferHeight('tableHeader')
         const paginationWrapperHeight = getReferHeight('paginationWrapper')
 
-        let _height = tableWrapperHeight - tableToolHeight - tableHeaderHeight - paginationWrapperHeight
+        let _height = tableWrapperHeight - tableToolHeight - tableHeaderHeight - paginationWrapperHeight - 1
+        paginationWrapperHeight > 10 ? '' : _height = _height - 10 
+
         this.bodyHeight = (_height > 0) ? `${_height}px` : 'auto'
       } else if (this.$refs && this.$refs.scrollbar) {
         const size = this.$refs.scrollbar.getSize()
@@ -871,6 +895,38 @@ export default {
         this.bodyHeight = 'auto'
       }
     },
+    updateColumnWidth () {
+      if (!(this.$refs && this.$refs.tableWrapper)) return
+
+      let keys = Object.keys(this.columnWidth)
+
+      if (this.sharedWidth && keys.every(k => { return this.columnWidth[k] && this.columnWidth[k].value && this.columnWidth[k].type === 'absolute' })) {
+        let wrapperWidth = this.$refs.tableWrapper.offsetWidth
+
+        let shared = 0
+        let tableContentWidth = 0
+        keys.forEach(k => { tableContentWidth += parseFloat(this.columnWidth[k].value) })
+
+        let reserved = 2
+        let checkColumnWidth = this.showCheck ? 50 : 0
+        if (wrapperWidth > (tableContentWidth + checkColumnWidth + reserved)) {
+          shared = (wrapperWidth - (tableContentWidth + checkColumnWidth + reserved)) / keys.length
+          shared = Math.floor(shared * 10) / 10
+        }
+
+        let _columnWidth = {}
+        keys.forEach(k => {
+          let _w = parseFloat(this.columnWidth[k].value)
+          _columnWidth[k] = { type: 'absolute', value: (_w + shared) + 'px' }
+        })
+
+        this.sharedColumnWidth = _columnWidth
+      } else {
+        this.sharedColumnWidth = this.columnWidth
+      }
+
+      setTimeout(this.updateFixedColumn, 10)
+    },
     /**
    * @function 获取Cell的样式数据
    */
@@ -880,12 +936,12 @@ export default {
         style.backgroundColor = this.highlightedColor
       }
 
-      if (this.columnWidth[columnIndex]) {
+      if (this.sharedColumnWidth[columnIndex]) {
         return {
           ...style,
           flexGrow: 0,
           flexShrink: 0,
-          flexBasis: this.columnWidth[columnIndex].value
+          flexBasis: this.sharedColumnWidth[columnIndex].value
         }
       } else {
         return {
@@ -909,7 +965,7 @@ export default {
       let columnNum = this.getColumnNum()
       let defaultMinWidth = '100%'
       let offset = 2
-      let keys = Object.keys(this.columnWidth)
+      let keys = Object.keys(this.sharedColumnWidth)
 
       if (!(keys.length > 0)) {
         return defaultMinWidth
@@ -920,7 +976,7 @@ export default {
         for (let i = 0; i < keys.length; i++) {
           if (keys[i] >= columnNum) continue
 
-          let conf = this.columnWidth[keys[i]]
+          let conf = this.sharedColumnWidth[keys[i]]
           if (conf.type === 'absolute') {
             abs.total += parseFloat(conf.value)
             abs.count += 1
@@ -956,7 +1012,7 @@ export default {
       let fixedColumn = []
       for (let i = 0; i <= this.fixedConfig; i++) {
         let columnIndex = i
-        let item = this.columnWidth[columnIndex]
+        let item = this.sharedColumnWidth[columnIndex]
         if (item && item.type === 'absolute') {
           fixedWidth += parseFloat(item.value)
           fixedColumn.push(columnIndex)
@@ -1650,9 +1706,14 @@ export default {
     onChangePosition (movement) {
       let next = movement / 100
       this.$refs.scrollbar.scrollToX(next * this.bodyViewerWidth)
+    },
+    onResize () {
+      if (this.handleResize) {
+        this.handleResize()
+      }
     }
   },
-  components: { VueInput, FilterPanel, VuePagination, VueScrollbar, HorizontalScrollbar }
+  components: { VueInput, FilterPanel, VuePagination, VueScrollbar, HorizontalScrollbar, ResizeDetector }
 }
 </script>
 
@@ -1666,6 +1727,7 @@ $activeColor: #046FDB;
 $fontFamily: Arial, Helvetica, sans-serif;
 
 .v-table-dynamic{
+  position: relative;
   width: 100%;
   display: block;
   box-sizing: border-box;
