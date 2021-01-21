@@ -24,15 +24,19 @@
           <div 
             v-if="headerInfirstRow" 
             class="v-table-row flex-c is-header"
-            :class="{ 'is-striped': rowStripe, 'v-show-border': tableBorder, 'is-hovering': tableData.rows[0].hovering }"
+            :class="{ 
+              'is-striped': rowStripe, 
+              'v-show-border': tableBorder, 
+              'is-hovering': hoveringRow === 0
+            }"
             :style="{ 
               height: headerHeight + 'px', 
               minWidth: getRowMinWidth(),
               marginLeft: this.headerLeft * -1 +'px',
-              backgroundColor: headerBgColor || (tableData.rows[0].hovering && rowHoverColor) || ''
+              backgroundColor: headerBgColor || ''
             }"
-            @mouseenter="onMouseenter(tableData.rows[0])" 
-            @mouseleave="onMouseleave(tableData.rows[0])"
+            @mouseenter="onMouseenter(tableData.rows[0], 0)" 
+            @mouseleave="onMouseleave(tableData.rows[0], 0)"
             @click="onClickRow(tableData.rows[0], 0)"
           >
             <div 
@@ -129,12 +133,13 @@
                 :class="{ 
                   'is-striped': (rowStripe && i % 2 === 0), 
                   'v-show-border': tableBorder,
-                  'is-hovering': tableRow.hovering,
+                  'is-hovering': hoveringRow === i,
+                  'is-selected': selectedRow === tableRow.index,
                   'is-odd': i % 2 === 1 
                 }"
-                :style="{ height: rowHeight + 'px', minWidth: getRowMinWidth(), backgroundColor: tableRow.hovering ? rowHoverColor : '' }"
-                @mouseenter="onMouseenter(tableRow)" 
-                @mouseleave="onMouseleave(tableRow)"
+                :style="{ height: rowHeight + 'px', minWidth: getRowMinWidth() }"
+                @mouseenter="onMouseenter(tableRow, i)" 
+                @mouseleave="onMouseleave(tableRow, i)"
                 @click="onClickRow(tableRow, tableRow.index)"
               >
                 <div 
@@ -191,14 +196,18 @@
           <div 
             v-if="headerInfirstRow" 
             class="v-table-row flex-c is-header"
-            :class="{ 'is-striped': rowStripe, 'v-show-border': tableBorder, 'is-hovering': tableData.rows[0].hovering }"
+            :class="{ 
+              'is-striped': rowStripe, 
+              'v-show-border': tableBorder, 
+              'is-hovering': hoveringRow === 0 
+            }"
             :style="{ 
               height: headerHeight + 'px',
               minWidth: getRowMinWidth(),
-              backgroundColor: headerBgColor || (tableData.rows[0].hovering && rowHoverColor) || ''
+              backgroundColor: headerBgColor || ''
             }"
-            @mouseenter="onMouseenter(tableData.rows[0])" 
-            @mouseleave="onMouseleave(tableData.rows[0])"
+            @mouseenter="onMouseenter(tableData.rows[0], 0)" 
+            @mouseleave="onMouseleave(tableData.rows[0], 0)"
             @click="onClickRow(tableData.rows[0], 0)"
           >
             <div 
@@ -283,12 +292,13 @@
                   :class="{ 
                     'is-striped': (rowStripe && i % 2 === 0), 
                     'v-show-border': tableBorder,
-                    'is-hovering': tableRow.hovering,
+                    'is-hovering': hoveringRow === i,
+                    'is-selected': selectedRow === tableRow.index,
                     'is-odd': i % 2 === 1 
                   }"
-                  :style="{ height: rowHeight + 'px', backgroundColor: tableRow.hovering ? rowHoverColor : '' }"
-                  @mouseenter="onMouseenter(tableRow, true)" 
-                  @mouseleave="onMouseleave(tableRow, true)"
+                  :style="{ height: rowHeight + 'px' }"
+                  @mouseenter="onMouseenter(tableRow, i, true)" 
+                  @mouseleave="onMouseleave(tableRow, i, true)"
                   @click="onClickRow(tableRow, tableRow.index)"
                 >
                   <div 
@@ -419,7 +429,9 @@ export default {
       bodyViewerWidth: null,
       hMovement: 0,
       bodyHeight: 'auto',
-      sharedColumnWidth: []
+      sharedColumnWidth: [],
+      hoveringRow: -1,
+      selectedRow: -1
     }
   },
   props: {
@@ -479,12 +491,6 @@ export default {
     headerBgColor () {
       if (this.params && this.params.headerBgColor && typeof this.params.headerBgColor === 'string') {
         return this.params.headerBgColor
-      }
-      return ''
-    },
-    rowHoverColor () {
-      if (this.params && this.params.rowHoverColor && typeof this.params.rowHoverColor === 'string') {
-        return this.params.rowHoverColor
       }
       return ''
     },
@@ -695,6 +701,9 @@ export default {
     },
     sharedWidth () {
       return !!(this.params && this.params.sharedWidth)
+    },
+    enableSelectRow () {
+      return !!(this.params && this.params.enableSelectRow)
     }
   },
   watch: {
@@ -1176,14 +1185,17 @@ export default {
    */
     onClickRow (tableRow, rowIndex) {
       this.$emit('row-click', rowIndex, this.getRowDataFromTableRow(tableRow))
+      if (this.enableSelectRow && !(this.headerInfirstRow && rowIndex === 0)) {
+        this.selectedRow = rowIndex
+      }
     },
     /**
    * @function 鼠标进入Row事件
    * @param {Object} tableRow Row数据对象
    * @param {Boolean} isFixedBody 是否为固定列中的row
    */
-    onMouseenter (tableRow, isFixedBody = false) {
-      tableRow.hovering = true
+    onMouseenter (tableRow, index, isFixedBody = false) {
+      this.hoveringRow = index
       if (isFixedBody && this.$refs.scrollbar && this.$refs.scrollbar.onMouseenter) {
         this.$refs.scrollbar.onMouseenter()
       }
@@ -1193,8 +1205,8 @@ export default {
    * @param {Object} tableRow Row数据对象
    * @param {Boolean} isFixedBody 是否为固定列中的row
    */
-    onMouseleave (tableRow, isFixedBody = false) {
-      tableRow.hovering = false
+    onMouseleave (tableRow, index, isFixedBody = false) {
+      this.hoveringRow = -1
       if (isFixedBody && this.$refs.scrollbar && this.$refs.scrollbar.onMouseleave) {
         this.$refs.scrollbar.onMouseleave()
       }
@@ -1565,6 +1577,16 @@ export default {
       return []
     },
     /**
+   * @function 获取所有行的数据对象集合，行数据为内部转换后的对象: {Object} tableRow
+   */
+    getRows () {
+      if (this.tableData && unemptyArray(this.tableData.rows)) {
+        return this.tableData.rows
+      }
+
+      return []
+    },
+    /**
    * @function 是否所有行均为选中
    */
     isAllRowChecked () {
@@ -1618,6 +1640,15 @@ export default {
             this.tableData.rows[0].checked = false
           }
         }
+      }
+    },
+    /**
+   * @function 设置指定行单选选中
+   * @param {Number} rowIndex 指定的行索引（排序后的索引）
+   */
+    setRowSelected (rowIndex) {
+      if (this.enableSelectRow && !(this.headerInfirstRow && rowIndex === 0)) {
+        this.selectedRow = rowIndex
       }
     },
     /**
@@ -1829,6 +1860,10 @@ $fontFamily: Arial, Helvetica, sans-serif;
 }
 .v-table-row.is-hovering{
   background-color: #F3F5F7;
+}
+.v-table-row.is-selected,
+.v-table-row.is-selected.is-hovering{
+  background-color: #EAEAEA;
 }
 
 .table-check{

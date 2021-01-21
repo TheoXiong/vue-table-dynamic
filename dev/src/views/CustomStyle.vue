@@ -81,6 +81,7 @@ const defaultTableParams = {
   sharedWidth: true,
   headerHeight: 48,
   rowHeight: 36,
+  enableSelectRow: true,
   // wordWrap: 'break-word',
   // whiteSpace: 'normal',
   // textOverflow: 'clip',
@@ -117,7 +118,7 @@ const defaultTableParams = {
   language: ''
 }
 
-for (let i = 0; i < 200; i++) {
+for (let i = 0; i < 70; i++) {
   defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
 }
 
@@ -474,8 +475,8 @@ $g_table_header_height: 30px;
 $g_table_row_bg: #F5F5FB;
 $g_table_row_bg2: #FFFFFF;
 $g_table_row_height: 30px;
-$g_table_hover_color: rgba(0, 0, 0, 0.05);
-$g_table_active_color: rgba(45, 166, 154, 0.15);
+$g_table_hover_color: rgba(242, 242, 242, 1);
+$g_table_active_color: rgba(217, 243, 240, 1);
 $g_table_size: 13px;
 $g_table_color: rgba(0,0,0,0.65);
 
@@ -503,6 +504,14 @@ $g_table_color: rgba(0,0,0,0.65);
     .table-cell, .table-check{
       border-left: 1px solid $g_table_row_bg2 !important;
     }
+  }
+  .v-table-row.is-hovering, .table-row.is-odd.is-hovering {
+    background: $g_table_hover_color !important;
+  }
+  .v-table-row.is-selected,
+  .v-table-row.is-selected.is-hovering,
+  .table-row.is-odd.is-selected.is-hovering {
+    background-color: $g_table_active_color !important;
   }
   .v-table-row.is-header{
     background: $g_table_header_bg !important;
