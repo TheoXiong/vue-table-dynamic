@@ -74,22 +74,24 @@
                   {{ tableCell.data }}
                 </span>
                 <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
-                  <i 
-                    class="sort-btns sort-ascending"
-                    :style="{
-                      borderBottomColor: (activatedSort[j] && activatedSort[j] === 'ascending') ? activedColor : '#C0C4CC'
-                    }"
-                    @click.stop="onSort(j, 'ascending')"
-                  >
-                  </i>
-                  <i 
-                    class="sort-btns sort-descending" 
-                    :style="{
-                      borderTopColor: (activatedSort[j] && activatedSort[j] === 'descending') ? activedColor : '#C0C4CC'
-                    }"
-                    @click.stop="onSort(j, 'descending')"
-                  >
-                  </i>
+                  <span class="table-sort-item flex-c-c" @click.stop="onSort(j, 'ascending')">
+                    <i 
+                      class="sort-btns sort-ascending"
+                      :style="{
+                        borderBottomColor: (activatedSort[j] && activatedSort[j] === 'ascending') ? activedColor : '#C0C4CC'
+                      }"
+                    >
+                    </i>
+                  </span>
+                  <span class="table-sort-item flex-c-c" @click.stop="onSort(j, 'descending')">
+                    <i 
+                      class="sort-btns sort-descending" 
+                      :style="{
+                        borderTopColor: (activatedSort[j] && activatedSort[j] === 'descending') ? activedColor : '#C0C4CC'
+                      }"
+                    >
+                    </i>
+                  </span>
                 </span>
                 <span 
                   v-if="filterConfig[j]" 
@@ -245,22 +247,24 @@
                   {{ tableCell.data }}
                 </span>
                 <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
-                  <i 
-                    class="sort-btns sort-ascending" 
-                    :style="{
-                      borderBottomColor: (activatedSort[j] && activatedSort[j] === 'ascending') ? activedColor : '#C0C4CC'
-                    }"
-                    @click.stop="onSort(j, 'ascending')"
-                  >
-                  </i>
-                  <i 
-                    class="sort-btns sort-descending"
-                    :style="{
-                      borderTopColor: (activatedSort[j] && activatedSort[j] === 'descending') ? activedColor : '#C0C4CC'
-                    }"
-                    @click.stop="onSort(j, 'descending')"
-                  >
-                  </i>
+                  <span class="table-sort-item flex-c-c" @click.stop="onSort(j, 'ascending')">
+                    <i 
+                      class="sort-btns sort-ascending" 
+                      :style="{
+                        borderBottomColor: (activatedSort[j] && activatedSort[j] === 'ascending') ? activedColor : '#C0C4CC'
+                      }"
+                    >
+                    </i>
+                  </span>
+                  <span class="table-sort-item flex-c-c" @click.stop="onSort(j, 'descending')">
+                    <i 
+                      class="sort-btns sort-descending"
+                      :style="{
+                        borderTopColor: (activatedSort[j] && activatedSort[j] === 'descending') ? activedColor : '#C0C4CC'
+                      }"
+                    >
+                    </i>
+                  </span>
                 </span>
                 <span 
                   v-if="filterConfig[j]" 
@@ -1956,9 +1960,15 @@ $fontFamily: Arial, Helvetica, sans-serif;
 
 .table-sort{
   width: 20px;
+  min-width: 20px;
   margin-left: 2px;
   position: relative;
   vertical-align: middle;
+  .table-sort-item{
+    width: 100%;
+    height: 50%;
+    cursor: pointer;
+  }
   .sort-btns{
     width: 0;
     height: 0;
@@ -1992,6 +2002,8 @@ $fontFamily: Arial, Helvetica, sans-serif;
   color: $normalColor;
   i.iconfont{
     font-size: 12px;
+    display: inline-block;
+    padding: 3px;
   }
   i.iconfont.activated{
     color: $activeColor;
