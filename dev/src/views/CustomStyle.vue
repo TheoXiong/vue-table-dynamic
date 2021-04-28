@@ -73,7 +73,7 @@ const random = (length) => {
 
 const defaultTableParams = {
   data: [
-    [' Index', `Data1`, `Data2`, `Data3`]
+    [' Index', `Data1`, `Data2 <SUB>sub</SUB>`, `Data3`]
   ],
   header: 'row',
   height: '',
@@ -115,7 +115,8 @@ const defaultTableParams = {
   scrollbar: 'hover',
   scrollbarColor: 'rgba(0, 0, 0, 0.45)',
   scrollbarHoverColor: 'rgba(0, 0, 0, 0.65)',
-  language: ''
+  language: '',
+  useHTMLAsHeaderName: true
 }
 
 for (let i = 0; i < 70; i++) {

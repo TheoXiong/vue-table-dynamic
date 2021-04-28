@@ -71,7 +71,8 @@
                   class="table-cell-content" 
                   :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(0, j) }"
                 >
-                  {{ tableCell.data }}
+                  <span v-if="useHTMLAsHeaderName" v-html="tableCell.data"></span>
+                  <span v-else>{{ tableCell.data }}</span>
                 </span>
                 <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
                   <span class="table-sort-item flex-c-c" @click.stop="onSort(j, 'ascending')">
@@ -244,7 +245,8 @@
                   class="table-cell-content" 
                   :style="{ whiteSpace: whiteSpace, wordWrap: wordWrap, textOverflow: textOverflow, ...getStyleCustomized(0, j) }"
                 >
-                  {{ tableCell.data }}
+                  <span v-if="useHTMLAsHeaderName" v-html="tableCell.data"></span>
+                  <span v-else>{{ tableCell.data }}</span>
                 </span>
                 <span v-if="sortConfig[j]" class="table-sort flex-dir-column" :style="{ height: '30px' }">
                   <span class="table-sort-item flex-c-c" @click.stop="onSort(j, 'ascending')">
@@ -708,6 +710,9 @@ export default {
     },
     enableSelectRow () {
       return !!(this.params && this.params.enableSelectRow)
+    },
+    useHTMLAsHeaderName () {
+      return !!(this.params && this.params.useHTMLAsHeaderName)
     }
   },
   watch: {
