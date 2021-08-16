@@ -60,7 +60,7 @@
               :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
               :style="getCellStyle(0, j)"
               @click="onClickCell(tableCell, 0, j)"
-              @dblclick.exact.stop="onDblclickCell(tableCell, 0, j)"
+              @dblclick.exact.stop="onDblclickCell(tableCell, 0, j, tableData.rows[0])"
               @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, 0, j)"
             >
               <span 
@@ -124,6 +124,7 @@
             :scrollbarHoverColor="scrollbarHoverColor"
             :border-radius="scrollbarBorderRadius"
             :step="scrollStep"
+            :delay="scrollDelay"
             @scroll-x="onScrollX"
             @scroll-y="onScrollY"
             @size="onSize"
@@ -165,7 +166,7 @@
                   :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
                   :style="getCellStyle(tableRow.index, j)"
                   @click="onClickCell(tableCell, tableRow.index, j)"
-                  @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j)"
+                  @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j, tableRow)"
                   @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, tableRow.index, j)"
                 >
                   <slot 
@@ -234,7 +235,7 @@
               :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn) }"
               :style="getCellStyle(0, j)"
               @click="onClickCell(tableCell, 0, j)"
-              @dblclick.exact.stop="onDblclickCell(tableCell, 0, j)"
+              @dblclick.exact.stop="onDblclickCell(tableCell, 0, j, tableData.rows[0])"
               @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, 0, j)"
             >
               <span 
@@ -327,7 +328,7 @@
                     :class="{ 'v-show-border': tableBorder, 'is-header': (j === 0 && headerInfirstColumn ) }"
                     :style="getCellStyle(tableRow.index, j)"
                     @click="onClickCell(tableCell, tableRow.index, j)"
-                    @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j)"
+                    @dblclick.exact.stop="onDblclickCell(tableCell, tableRow.index, j, tableRow)"
                     @contextmenu.stop.prevent="onContextmenuCell($event, tableCell, tableRow.index, j)"
                   >
                     <slot 
@@ -425,7 +426,6 @@ export default {
       totalPages: 0,
       pageSize: 0,
       headerLeft: 0,
-      scrollStep: 40,
       scrollx: 'left',
       scrolly: 'top',
       fixedColumn: [],
@@ -698,6 +698,18 @@ export default {
         return this.params.scrollbarHoverColor
       }
       return '#DFDFDF'
+    },
+    scrollStep () {
+      if (this.params && typeof this.params.scrollStep === 'number' && this.params.scrollStep >= 0) {
+        return this.params.scrollStep
+      }
+      return 50
+    },
+    scrollDelay () {
+      if (this.params && typeof this.params.scrollDelay === 'number' && this.params.scrollDelay >= 0) {
+        return this.params.scrollDelay
+      }
+      return 100
     },
     lang () {
       if (this.params && ['en_US', 'zh_CN'].includes(this.params.language)) {
@@ -1248,8 +1260,9 @@ export default {
    * @param {Number} rowIndex 行索引
    * @param {Number} columnIndex 列索引
    */
-    onDblclickCell (tableCell, rowIndex, columnIndex) {
-      this.$emit('cell-dblclick', rowIndex, columnIndex, tableCell.data)
+    onDblclickCell (tableCell, rowIndex, columnIndex, tableRow) {
+      const rowData = this.getRowDataFromTableRow(tableRow)
+      this.$emit('cell-dblclick', rowIndex, columnIndex, tableCell.data, rowData)
     },
     /**
    * @function Cell失去焦点. 如果启用了编辑功能，则用当前输入更新数据。如果源数据是number类型，则输入为number时才有效
