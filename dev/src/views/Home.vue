@@ -7,6 +7,7 @@
       <keep-alive>
         <default-style v-if="layout === 'default'"></default-style>
         <custom-style v-else-if="layout === 'custom'"></custom-style>
+        <custom-cell v-else-if="layout === 'slot'"></custom-cell>
       </keep-alive>
     </section>
   </div>
@@ -16,6 +17,7 @@
 import NavMenu from './NavMenu.vue'
 import DefaultStyle from './DefaultStyle.vue'
 import CustomStyle from './CustomStyle.vue'
+import CustomCell from './CustomCell.vue'
 
 export default {
   name: 'Home',
@@ -29,7 +31,7 @@ export default {
       this.layout = key
     }
   },
-  components: { NavMenu, DefaultStyle, CustomStyle }
+  components: { NavMenu, DefaultStyle, CustomStyle, CustomCell }
 }
 </script>
 

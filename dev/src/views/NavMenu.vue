@@ -31,6 +31,9 @@ export default {
         key: 'default',
         name: 'Default Style',
       }, {
+        key: 'slot',
+        name: 'Custom Cell',
+      }, {
         key: 'custom',
         name: 'Custom Style',
       }, {
