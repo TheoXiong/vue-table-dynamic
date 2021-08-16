@@ -1,7 +1,7 @@
 <template>
   <div class="content-wrap">
     <aside>
-      <vue-button class="aside-btns" size="mini" @click="addRow">Add Row</vue-button>
+      <!-- <vue-button class="aside-btns" size="mini" @click="addRow">Add Row</vue-button> -->
     </aside>
     <section>
       <vue-table-dynamic 
