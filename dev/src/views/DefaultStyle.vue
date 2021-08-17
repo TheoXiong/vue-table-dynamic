@@ -117,7 +117,7 @@ const defaultTableParams = {
   language: ''
 }
 
-for (let i = 0; i < 200; i++) {
+for (let i = 0; i < 197; i++) {
   defaultTableParams.data.push([i+1, `${random()}-Cell`, `${random()}-Cell`, `${random()}-Cell`])
 }
 

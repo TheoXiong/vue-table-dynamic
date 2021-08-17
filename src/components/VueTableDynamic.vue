@@ -868,6 +868,7 @@ export default {
       })
 
       this.$nextTick(this.updateActivatedRows)
+      setTimeout(() => { this.updateBodyHeight() }, 30)
     },
     /**
    * @function 每页显示条数切换事件
@@ -891,8 +892,10 @@ export default {
     },
     /**
      * @function 获取表格主体部分的高度
-     *           1. 如果设置了params.height, 则使用params.height
-     *           2. 如果没有设置params.height，则通过
+     *           1. 如果设置了params.height, 则使用params.height作为表格主体的高度
+     *           2. 如果没有设置params.height，但设置了fitToHeight，则通过容器总高度减去表头/工具栏/分页等高度，计算出表格主体高度
+     *              注：需要在表格组件外层dom设置一个固定高度
+     *           3. 如果没有设置height和fitToHeight，则计算实际内容高度，作为表格主体高度，表格整体高度被内容撑开
      */
     updateBodyHeight () {
       if (this.height && /\d+px/.test(this.height)) {
