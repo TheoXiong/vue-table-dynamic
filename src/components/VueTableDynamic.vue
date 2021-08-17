@@ -380,8 +380,9 @@
         <vue-pagination
           :page-size="pageSize"
           :page-sizes="pageSizes"
-          :total="totalPages" 
+          :total="totalPages"
           :show-total="showTotal"
+          :paper-count="paperCount"
           :disabled="!pagination"
           :lang="lang"
           @current-page="onPageChange"
@@ -665,6 +666,12 @@ export default {
         return this.params.pageSizes
       }
       return [10, 20, 50, 100]
+    },
+    paperCount () {
+      if (this.params && typeof this.params.paperCount === 'number' && this.params.paperCount > 0) {
+        return this.params.paperCount
+      }
+      return 9
     },
     showTotal () {
       return !!(this.params && this.params.showTotal)

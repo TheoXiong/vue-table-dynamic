@@ -61,8 +61,6 @@
 <script>
 import ClickOutside from '../utils/clickoutside.js'
 
-const pageCountMax = 9
-
 export default {
   name: 'VuePagination',
   data() {
@@ -79,6 +77,7 @@ export default {
     total: Number,
     pageSize: Number,
     pageSizes: { type: Array, default: () => [10, 20, 50, 100]},
+    paperCount: { type: Number, default: 9 },
     disabled: { type: Boolean, default: false },
     showTotal: { type: Boolean, default: false },
     lang: { type: String, default: 'en_US' }
@@ -89,6 +88,12 @@ export default {
     },
     disableNext () {
       return this.currentPage === this.pageCount
+    },
+    pageCountMax () {
+      if (this.paperCount >= 5 && this.paperCount <= 30) {
+        return this.paperCount
+      }
+      return 9
     }
   },
   watch: {
@@ -154,7 +159,7 @@ export default {
      *  page数小于pageCountMax时，全部显示
      *  page数大于pageCountMax时，page视图分三种，[ 1 ---> thresholdLeft ---> thresholdRight ---> pageCount ]
      *  根据当前激活page编号，显示对应视图
-     *  第一种 [1, thresholdLeft]: 1到pageCountMax-2依次显示page最前面编号, pageCountMax-1显示..., pageCountMax显示pageCount
+     *  第一种 [1, thresholdLeft]: 1到pageCountMax-2依次显示page最前面编号, this.pageCountMax-1显示..., pageCountMax显示pageCount
      *  第二种 (thresholdLeft, thresholdRight): 1...pages...pageCount
      *  第三种 [thresholdRight, pageCount]: 1显示page1, 2显示..., 3到pageCountMax依次显示page最后面编号
      */
@@ -162,7 +167,7 @@ export default {
       if (this.disabled) return
       if (tagetPage < 1 || tagetPage > this.pageCount) return
 
-      if (this.pageCount <= pageCountMax) {
+      if (this.pageCount <= this.pageCountMax) {
         this.pages.splice(0, this.pages.length)
         for (let i = 1; i < (this.pageCount + 1); i++) {
           this.pages.push({ number: i, value: String(i), disabled: false, activated: !!(tagetPage === i) })
@@ -172,27 +177,27 @@ export default {
         return
       }
 
-      const thresholdLeft = Math.floor(pageCountMax / 2)
+      const thresholdLeft = Math.floor(this.pageCountMax / 2)
       const thresholdRight = this.pageCount - thresholdLeft + 1
       let pages = []
 
       if (tagetPage <= thresholdLeft) {
-        for (let i = 1; i < (pageCountMax + 1); i++) {
+        for (let i = 1; i < (this.pageCountMax + 1); i++) {
           pages.push({ number: i, value: String(i), disabled: false, activated: !!(tagetPage === i) })
         }
         pages[pages.length - 2] = { number: this.pageCount - 1, value: '...', disabled: true, activated: false }
         pages[pages.length - 1].value = String(this.pageCount)
         pages[pages.length - 1].number = this.pageCount
       } else if (tagetPage >= thresholdRight) {
-        for (let i = (this.pageCount - pageCountMax + 1); i < (this.pageCount + 1); i++) {
+        for (let i = (this.pageCount - this.pageCountMax + 1); i < (this.pageCount + 1); i++) {
           pages.push({ number: i, value: String(i), disabled: false, activated: !!(tagetPage === i) })
         }
         pages[0].value = '1'
         pages[0].number = 1
         pages[1] = { number: 2, value: '...', disabled: true, activated: false }
       } else {
-        for (let i = 0; i < pageCountMax; i++) {
-          let number = tagetPage - Math.floor(pageCountMax / 2) + i
+        for (let i = 0; i < this.pageCountMax; i++) {
+          let number = tagetPage - Math.floor(this.pageCountMax / 2) + i
           pages.push({ 
             number: number, 
             value: String(number), 

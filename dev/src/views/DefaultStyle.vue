@@ -111,6 +111,7 @@ const defaultTableParams = {
   //   row: [{ scope: [0], styles: { color: '#046FDB'}}]
   // },
   pagination: true,
+  // paperCount: 6,
   // showTotal: true,
   // pageSize: 20,
   // pageSizes: [5, 15, 30, 50, 100],
