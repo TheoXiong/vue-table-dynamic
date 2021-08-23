@@ -3,6 +3,11 @@
     <aside>
       <!-- <vue-button class="aside-btns" size="mini" @click="addRow">Add Row</vue-button> -->
     </aside>
+    <header>
+      <vue-search class="tool-search" v-model="searchValue" placeholder="Search" @search="handleSearch(searchValue)">
+        <i class="iconfont iconsearch" slot="suffix" @click="handleSearch(searchValue)"></i>
+      </vue-search>
+    </header>
     <section>
       <vue-table-dynamic 
         :params="params"
@@ -31,6 +36,7 @@
 
 <script>
 import VueButton from './VueButton.vue'
+import VueSearch from './VueSearch.vue'
 import VueMsg from 'vue-msgs'
 import { saveAs } from 'file-saver'
 import { table, getBorderCharacters } from 'table'
@@ -55,7 +61,7 @@ const defaultTableParams = {
   border: true,
   stripe: true,
   showCheck: true,
-  enableSearch: true,
+  enableSearch: false,
   headerBgColor: '#efefef',
   columnWidth: [{column: 0, width: 80}, {column: 1, width: 150}, {column: 2, width: 150 }, {column: 3,  width: 180},],
   sharedWidth: true,
@@ -101,6 +107,7 @@ export default {
       widthIncrement: 1,
       heightIncrement: 1,
       rowHeightIncrement: 1,
+      searchValue: ''
     }
   },
   methods: {
@@ -118,6 +125,17 @@ export default {
       }
 
       this.params.data.push(newRow)
+    },
+    handleSearch (value) {
+      this.$refs.table.search(
+        value, 
+        [0, 1, 2],
+        null,
+        [
+          { column: 0, method: cellData => cellData.index },
+          { column: 1, method: cellData => cellData.value }
+        ]
+      )
     },
     onRowClick (index, data) {
       console.log('[ onRowClick ] : ', index, data)
@@ -138,7 +156,7 @@ export default {
       }
     }
   },
-  components: { VueButton, VueMsg }
+  components: { VueButton, VueSearch, VueMsg }
 }
 </script>
 
@@ -171,9 +189,23 @@ export default {
       border-bottom: 1px solid rgb(127, 130, 139);
     }
   }
+  header {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0px;
+    left: 200px;
+    right: 0;
+    height: 50px;
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    .tool-search {
+      width: 200px;
+    }
+  }
   section {
     position: absolute;
-    top:0px;
+    top: 50px;
     bottom: 0;
     left: 200px;
     right: 0;

@@ -1419,8 +1419,9 @@ export default {
    * @param {String} searchValue 关键字
    * @param {Array} included 在指定的列里进行匹配
    * @param {Array} excluded 不在指定的列里匹配。优先级高于included
+   * @param {Array} transform 匹配前先对单元格数据进行转换 [{ column: 0, method: (cellData, columnIndex, {...row}) => { return _cellData } }]
    */
-    search (searchValue, included, excluded) {
+    search (searchValue, included, excluded, transform) {
       if (!(this.tableData && this.tableData.rows)) return
 
       searchValue = String(searchValue)
@@ -1436,7 +1437,12 @@ export default {
           let matched = row.cells.some((cell, index) => {
             if (isExcluded && excluded.includes(index)) return false
             if (isIncluded && !included.includes(index)) return false
-            return String(cell.data).toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
+
+            const transformItem = Array.isArray(transform)
+              ? transform.find(item => item && item.column === index && typeof item.method === 'function') || null
+              : null
+            const cellData = transformItem ? transformItem.method(cell.data, index, { ...row }) : cell.data
+            return String(cellData).toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
           })
           row.show = !!matched
         }
